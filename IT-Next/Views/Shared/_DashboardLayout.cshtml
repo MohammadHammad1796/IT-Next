@@ -1,0 +1,220 @@
+@inject IWebHostEnvironment Environment;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dashboard - @ViewData["Title"]</title>
+	<link rel="icon" href="/images/fevicon/fevicon.png" type="image/gif" />
+
+	@if (Environment.IsDevelopment())
+	{
+		<link rel="stylesheet" href="/libs/bootstrap5.2.0/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="/libs/fontawesome5.10.0/css/all.min.css" />
+	}
+	else
+	{
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+		<link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous">	
+	}
+	<style>
+		main {
+			margin-top: 10px !important;
+		}
+
+		.loader_animation {
+			animation-name: rotatey;
+			animation-duration: 2s;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+			-webkit-animation-name: rotatey;
+			-webkit-animation-duration: 2s;
+			-webkit-animation-iteration-count: infinite;
+			-webkit-animation-timing-function: linear;
+			-moz-animation-name: rotatey;
+			-moz-animation-duration: 2s;
+			-moz-animation-iteration-count: infinite;
+			-moz-animation-timing-function: linear;
+			-ms-animation-name: rotatey;
+			-ms-animation-duration: 2s;
+			-ms-animation-iteration-count: infinite;
+			-ms-animation-timing-function: linear;
+			-o-animation-name: rotatey;
+			-o-animation-duration: 2s;
+			-o-animation-iteration-count: infinite;
+			-o-animation-timing-function: linear;
+		}
+
+		.bg_load {
+			float: left;
+			position: fixed;
+			width: 100%;
+			text-align: center;
+			height: 100%;
+			z-index: 10000;
+			top: 0;
+			left: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: #039ee3;
+			background-size: 100% 100%;
+			border: none;
+		}
+
+		@@-webkit-keyframes rotatey {
+		from {
+			-webkit-transform: rotatey(0deg);
+			-moz-transform: rotatey(0deg);
+			-ms-transform: rotatey(0deg);
+			-o-transform: rotatey(0deg);
+			transform: rotatey(0deg);
+		}
+		to {
+			-webkit-transform: rotatey(360deg);
+			-moz-transform: rotatey(360deg);
+			-ms-transform: rotatey(360deg);
+			-o-transform: rotatey(360deg);
+			transform: rotatey(360deg);
+		}
+		}
+
+		@@-moz-keyframes rotatey {
+		from {
+			-moz-transform: rotatey(0deg);
+		}
+		to {
+			-moz-transform: rotatey(360deg);
+		}
+		}
+
+		header {
+			background-color: white;
+		}
+
+		@@media (max-width: 760px) {
+			.navbar-brand {
+				right: 0px;
+				position: absolute;
+			}
+			header {
+				height: 50px !important;
+			}
+		}
+
+		@@media (min-width: 761px) {
+			.navbar-brand {
+				left: 4% !important;
+				position: relative !important;
+			}
+
+			.navbar-toggler {
+				display: block !important;
+			}
+
+			main.col-md-12 {
+				flex: 0 0 auto !important;
+				width: 100% !important;
+  				transition: all 500ms ease;
+			}
+			main.col-md-9 {
+				transition: all 500ms ease;
+			}
+		}
+
+		.nav-item > a.active {
+			border-radius: 10px;
+			background-color: var(--bs-gray-400);
+		}
+	</style>
+	@await RenderSectionAsync("styles", required: false)
+</head>
+<body>
+
+<div class="bg_load"> <img class="loader_animation" src="/images/loaders/loader_1.png" alt="#"> </div>
+
+<header class="navbar sticky-top flex-md-nowrap p-0 shadow">
+	<a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" asp-controller="Home" asp-action="Index">
+		<img src="/images/logos/it_logo.png" alt="logo" style="height: 40px;">
+	</a>
+	<button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="navbar-nav">
+		<div class="nav-item text-nowrap">
+			@* <a class="nav-link px-3" href="#">Sign out</a> *@
+		</div>
+	</div>
+</header>
+
+<div class="container-fluid">
+	<div class="row">
+		<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light collapse">
+			<div class="position-sticky pt-3">
+				<ul class="nav flex-column">
+					<partial name="DashboardPartials/_NavbarPartial"/>
+				</ul>
+			</div>
+		</nav>
+
+		<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+			@RenderBody()
+			<div class="toast-container position-fixed end-0 p-3" style="top: 60px !important;">
+				<div class="toast fade hide" role="alert" aria-live="assertive" aria-atomic="true">
+					<div class="toast-header">
+						<img src="/images/logos/it_logo.png" style="width: 40px;" class="rounded me-2" alt="IT-Next">
+						<small class="text-muted" id="#notificationTime"></small>
+						<button type="button" id="toastBtn" class="btn-close" data-bs-dismiss="toast"
+								aria-label="Close"></button>
+					</div>
+					<div class="toast-body" id="notificationMessage"></div>
+				</div>
+			</div>
+		</main>
+	</div>
+</div>
+
+<script src="/libs/jquery3.5.1/dist/jquery.min.js"></script>
+<partial name="DashboardPartials/_ValidationScriptsPartial"/>
+@if (Environment.IsDevelopment())
+{
+	<script src="/libs/bootstrap5.2.0/js/bootstrap.bundle.min.js"></script>
+}
+else
+{
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+}
+<script>
+	function DisplayToastNotification(message, time = "Now") {
+		$("#notificationMessage").text(message);
+		$("#notificationTime").text(time);
+		$('.toast').toast('show');
+	}
+</script>
+@await RenderSectionAsync("scripts", required: false)
+<script>
+	$(window).on('load', function () {
+		var window_location_href = window.location.href;
+		window_location_href = window_location_href.endsWith('/') ? window_location_href.substr(0, window_location_href.length - 1) : window_location_href;
+		var pgurl = window_location_href.substr(window_location_href.lastIndexOf("/") + 1);
+
+
+		$("a.nav-link").each(function() {
+			var thisPage = $(this).attr("href");
+			thisPage = thisPage.endsWith('/') ? thisPage.substr(0, thisPage.length - 1) : thisPage;
+			thisPage = thisPage.substr(thisPage.lastIndexOf("/") + 1);
+
+			if (thisPage == pgurl)
+			$(this).addClass("active");
+		});
+		$(".bg_load").fadeOut("slow");
+
+		$('.navbar-toggler').on('click', function() {
+			$('#sidebarMenu').toggleClass('d-md-none d-md-block');
+			$('main').toggleClass('col-md-12');
+		});
+	});
+</script>
+</body>
+</html>

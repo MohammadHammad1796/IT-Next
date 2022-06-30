@@ -1,0 +1,16 @@
+﻿@inject IWebHostEnvironment Environment; 
+<li class="nav-item">
+	
+	@* ReSharper disable Html.PathError *@
+	@if (Environment.IsDevelopment())
+	{
+		
+		<a class="nav-link" href="/swagger/index.html" target="_blank">
+			@* ReSharper restore Html.PathError *@
+			Swagger
+		</a>
+	}
+	<a class="nav-link" aria-current="page" asp-controller="Categories" action="Index">
+		Categories
+	</a>
+</li>

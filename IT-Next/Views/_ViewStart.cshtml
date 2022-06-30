@@ -1,0 +1,7 @@
+﻿@{
+	string expectedLayout = ViewBag.Layout;
+	if (expectedLayout == "dashboard")
+		Layout = "_DashboardLayout";
+	else if (expectedLayout == "normal")
+		Layout = "_NormalLayout";
+}
