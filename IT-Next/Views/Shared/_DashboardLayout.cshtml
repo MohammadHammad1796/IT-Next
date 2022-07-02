@@ -201,7 +201,7 @@ else
 	}
 </script>
 @await RenderSectionAsync("scripts", required: false)
-<script>
+<script id="myLastElement">
 	$(window).on('load', function () {
 		var window_location_href = window.location.href;
 		window_location_href = window_location_href.endsWith('/') ? window_location_href.substr(0, window_location_href.length - 1) : window_location_href;
@@ -222,6 +222,9 @@ else
 			$('#sidebarMenu').toggleClass('d-md-none d-md-block');
 			$('main').toggleClass('col-md-12');
 		});
+
+		// delete hosting generated tags.
+		$("#myLastElement").nextAll().remove();
 	});
 </script>
 </body>
