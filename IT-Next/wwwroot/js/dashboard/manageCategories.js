@@ -65,7 +65,9 @@ function CalculateEntries(
   currentItemsCount,
   entriesObject
 ) {
-  entriesObject.from = queryObject.pageSize * (queryObject.pageNumber - 1) + 1;
+  entriesObject.from = queryObject.pageSize * (queryObject.pageNumber - 1);
+  if (currentItemsCount)
+    entriesObject.from++;
   entriesObject.to =
     currentItemsCount < queryObject.pageSize
       ? queryObject.pageSize * (queryObject.pageNumber - 1) + currentItemsCount
@@ -88,10 +90,11 @@ function ClearInputs() {
 // Work fine
 function LoadData(queryObject, table) {
   resource = GetData(queryObject);
-  if (!resource.count) {
+  /*if (!resource.count) {
     RenderEntriesInfo(entries);
+    //$(table).empty();
     return;
-  }
+  }*/
   if (!resource.categories.length && parseInt(queryObject.pageNumber) !== 1) {
     queryObject.pageNumber = 1;
     resource = GetData(queryObject);
@@ -220,7 +223,7 @@ function RenderPaginationButtons(pageNumber, pageSize, count) {
 
 function EnableSearch(queryObject, table) {
   $("#searchText").on("change paste keyup", function () {
-    var searchText = $(this).val().trim();
+    let searchText = $(this).val().trim();
     searchText = searchText.replace("\s+", " ");
     if (searchText.length < 3 || searchText.length > 50)
       if (queryObject.nameQuery === "") return;
@@ -232,6 +235,13 @@ function EnableSearch(queryObject, table) {
 
     query.nameQuery = searchText;
     LoadData(queryObject, table);
+    let columns = $(table).find(`td:contains(${searchText})`);
+    for (let column of columns)
+      {
+        let columnText = $(column).text();
+        let columnNewHtml = columnText.replace(searchText, `<span>${searchText}</span>`);
+        $(column).html(columnNewHtml);
+      }
   });
 }
 

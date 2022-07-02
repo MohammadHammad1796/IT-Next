@@ -26,6 +26,10 @@
     word-wrap: break-word;
 }
 
+#items td > span {
+    background-color: yellow;
+}
+
 @media only screen and (max-width: 760px) {
     
     table#items,
@@ -111,4 +115,18 @@ section {
 
 .form-select:hover {
     cursor: pointer;
+}
+
+.sortSection > .col-12 {
+	position: relative;
+	left: 33.33333333%;
+	width: 66.66666666%;
+}
+
+@media (max-width: 400px) {
+	.sortSection > .col-12 {
+		position: relative;
+		left: 25%;
+		width: 75%;
+	}
 }
