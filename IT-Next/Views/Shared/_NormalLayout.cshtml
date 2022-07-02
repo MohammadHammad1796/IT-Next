@@ -584,6 +584,12 @@
 </script>
 
 @await RenderSectionAsync("scripts", required: false)
+<script id="myLastElement">
+	$(window).on('load', function () {
+		// delete hosting generated tags.
+		$("#myLastElement").nextAll().remove();
+	});
+</script>
 </body>
 
 </html>
