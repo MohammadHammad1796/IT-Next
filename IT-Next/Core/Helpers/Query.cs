@@ -25,21 +25,6 @@ public class Query<TEntity> where TEntity : class
         Orders = new List<Ordering<TEntity>>();
     }
 
-    public Query(Expression<Func<TEntity, bool>> conditions)
-    {
-        Conditions = conditions;
-        IncludeProperties = new List<Expression<Func<TEntity, object>>>();
-        Orders = new List<Ordering<TEntity>>();
-    }
-
-    public Query(Expression<Func<TEntity, bool>> conditions, Paging paging)
-    {
-        Conditions = conditions;
-        Paging = paging;
-        IncludeProperties = new List<Expression<Func<TEntity, object>>>();
-        Orders = new List<Ordering<TEntity>>();
-    }
-
     public void AddIncludeProperty(Expression<Func<TEntity, object>> expression)
     {
         IncludeProperties.Add(expression);

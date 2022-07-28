@@ -1,16 +1,25 @@
-﻿@inject IWebHostEnvironment Environment; 
-<li class="nav-item">
-	
-	@* ReSharper disable Html.PathError *@
-	@if (Environment.IsDevelopment())
-	{
-		
+﻿<li class="nav-item">
+	<environment include="Development">
+		@* ReSharper disable Html.PathError *@
 		<a class="nav-link" href="/swagger/index.html" target="_blank">
 			@* ReSharper restore Html.PathError *@
 			Swagger
 		</a>
-	}
-	<a class="nav-link" aria-current="page" asp-controller="Categories" action="Index">
+	</environment>
+
+	<a class="nav-link" aria-current="page" asp-controller="Dashboard" asp-action="Index">
+		Main
+	</a>
+	<a class="nav-link" aria-current="page" asp-controller="Dashboard" asp-action="Categories">
 		Categories
+	</a>
+	<a class="nav-link" aria-current="page" asp-controller="Dashboard" asp-action="SubCategories">
+		Sub Categories
+	</a>
+	<a class="nav-link" aria-current="page" asp-controller="Dashboard" asp-action="Brands">
+		Brands
+	</a>
+	<a class="nav-link" aria-current="page" asp-controller="Dashboard" asp-action="Products">
+		Products
 	</a>
 </li>

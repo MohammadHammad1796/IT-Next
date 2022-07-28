@@ -1,6 +1,7 @@
 ﻿using IT_Next.Core.Entities;
 using IT_Next.Core.Helpers;
 using IT_Next.Extensions;
+using IT_Next.Infrastructure.Extensions;
 
 namespace IT_Next.Infrastructure.Repositories;
 

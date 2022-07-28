@@ -1,6 +1,6 @@
 using IT_Next.Core.Repositories;
 using IT_Next.Core.Services;
-using IT_Next.Filters;
+using IT_Next.Custom.FilterAttributes;
 using IT_Next.Infrastructure.Data;
 using IT_Next.Infrastructure.Repositories;
 using IT_Next.Infrastructure.Services;
@@ -37,6 +37,10 @@ public class Program
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
             });
 
         services.AddAutoMapper(typeof(Program));
@@ -52,6 +56,15 @@ public class Program
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
+        services.AddScoped<ISubCategoryService, SubCategoryService>();
+        services.AddScoped<IBrandRepository, BrandRepository>();
+        services.AddScoped<IBrandService, BrandService>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IProductService, ProductService>();
+
+        services.AddScoped<IFileRepository, FileRepository>();
+        services.AddScoped<IPhotoRepository, PhotoRepository>();
     }
 
     public static void ConfigureApplication(WebApplication application)

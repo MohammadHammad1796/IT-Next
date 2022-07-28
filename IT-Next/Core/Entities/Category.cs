@@ -2,9 +2,9 @@
 
 namespace IT_Next.Core.Entities;
 
-public class Category : BaseEntity
+public class Category : EntityWithUniqueName
 {
     [Required]
     [MaxLength(100)]
-    public string Name { get; set; }
+    public override string Name { get; set; }
 }

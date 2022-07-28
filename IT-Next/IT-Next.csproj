@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Folder Include="Controllers\UIs\" />
+    <Folder Include="Custom\FilterAttributes\" />
   </ItemGroup>
 
 </Project>

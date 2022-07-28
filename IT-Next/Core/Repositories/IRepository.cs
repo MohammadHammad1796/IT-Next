@@ -10,4 +10,5 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
     Task<TEntity?> GetByIdAsync(int id, params Expression<Func<TEntity, object>>[] includeProperties);
     Task<IEnumerable<TEntity>> GetAsync(Query<TEntity>? query = null);
     Task DeleteAsync(TEntity entity);
+    Task<int> GetCountAsync(Expression<Func<TEntity, bool>>? conditions = null);
 }

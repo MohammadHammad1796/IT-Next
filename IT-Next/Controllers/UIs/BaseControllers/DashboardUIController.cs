@@ -6,7 +6,7 @@ namespace IT_Next.Controllers.UIs.BaseControllers;
 // ReSharper disable once InconsistentNaming
 public abstract class DashboardUIController : BaseUIController
 {
-    public DashboardUIController() : base("dashboard")
+    protected DashboardUIController() : base("dashboard")
     {
     }
 }

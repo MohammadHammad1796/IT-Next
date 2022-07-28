@@ -29,123 +29,20 @@ public class CategoriesController : Controller
         _categoryService = categoryService;
     }
 
-    [HttpGet("seed")]
-    public async Task<IActionResult> SeedFakeData()
-    {
-        var categories = new List<Category>
-        {
-            new()
-            {
-                Name = "Mobiles & Tab",
-                /*SubCategories = new List<SubCategory>
-                {
-                    new()
-                    {
-                        Name = "Mobiles"
-                    },
-                    new()
-                    {
-                        Name = "Tab"
-                    },
-                    new()
-                    {
-                        Name = "Spare parts"
-                    }
-                }*/
-            },
-            new()
-            {
-                Name = "Storage Solution",
-                /*SubCategories = new List<SubCategory>
-                {
-                    new()
-                    {
-                        Name = "Blank CDs & DVDs"
-                    },
-                    new()
-                    {
-                        Name = "External Hard Drives"
-                    },
-                    new()
-                    {
-                        Name = "Flash Cards"
-                    },
-                    new()
-                    {
-                        Name = "Internal Hard Drives"
-                    },
-                    new()
-                    {
-                        Name = "Optical Disk Drives"
-                    },
-                    new()
-                    {
-                        Name = "USB Flash"
-                    }
-                }*/
-            },
-            new()
-            {
-                Name = "Toys",
-                /*SubCategories = new List<SubCategory>
-                {
-                    new()
-                    {
-                        Name = "Fun Toys"
-                    },
-                    new()
-                    {
-                        Name = "Pool Accessories"
-                    },
-                    new()
-                    {
-                        Name = "Pool Toys"
-                    },
-                    new()
-                    {
-                        Name = "Scooters"
-                    },
-                    new()
-                    {
-                        Name = "Swimming Pool"
-                    }
-                }*/
-            },
-            new()
-            {
-                Name = "Empty"
-            }
-        };
-
-        foreach (var category in categories)
-            await _categoryRepository.AddAsync(category);
-
-        await _unitOfWork.CompleteAsync();
-        return Ok($"{categories.Count} category added.");
-    }
-
-    [HttpGet("clear")]
-    public async Task<IActionResult> DeleteFakeData()
-    {
-        var categories = await _categoryRepository.GetAsync();
-
-        foreach (var category in categories)
-            await _categoryRepository.DeleteAsync(category);
-
-        await _unitOfWork.CompleteAsync();
-        return Ok($"{categories.Count()} category deleted.");
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] CategoryQueryResource queryResource)
+    [HttpGet("{withTotal:bool?}")]
+    public async Task<IActionResult> Get([FromQuery] CategoryQueryResource queryResource, bool withTotal = true)
     {
         var query = _mapper.Map<Query<Category>>(queryResource);
 
         var categories = await _categoryRepository.GetAsync(query);
-        var count = await _categoryRepository.GetCountAsync(query);
+        var categoryResources = _mapper
+            .Map<IEnumerable<CategoryResource>>(categories).ToList();
 
-        var categoryResources = _mapper.Map<IEnumerable<CategoryResource>>(categories).ToList();
-        var resource = new CategoryWithCountResources(count, categoryResources);
+        if (!withTotal)
+            return Ok(categoryResources);
+
+        var count = await _categoryRepository.GetCountAsync(query.Conditions);
+        var resource = new ItemsWithCountResource<CategoryResource>(count, categoryResources);
         return Ok(resource);
     }
 
@@ -158,7 +55,7 @@ public class CategoriesController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> SaveCategory([FromBody] CategoryResource categoryResource)
+    public async Task<IActionResult> Save([FromBody] CategoryResource categoryResource)
     {
         Category category = new();
         if (categoryResource.Id != 0)
@@ -168,8 +65,11 @@ public class CategoriesController : Controller
                 return NotFound();
         }
 
-        if (!await ArePoliciesValid(categoryResource))
+        if (!await _categoryService.IsUnique(categoryResource.Name, categoryResource.Id))
+        {
+            ModelState.AddModelError(nameof(categoryResource.Name), "Category name duplicated.");
             return BadRequest(ModelState);
+        }
 
         _mapper.Map(categoryResource, category);
 
@@ -192,14 +92,5 @@ public class CategoriesController : Controller
         await _unitOfWork.CompleteAsync();
 
         return NoContent();
-    }
-
-    private async Task<bool> ArePoliciesValid(CategoryResource categoryResource)
-    {
-        if (await _categoryService.IsUnique(categoryResource.Name, categoryResource.Id))
-            return true;
-
-        ModelState.AddModelError(nameof(categoryResource.Name), "Category name duplicated.");
-        return false;
     }
 }

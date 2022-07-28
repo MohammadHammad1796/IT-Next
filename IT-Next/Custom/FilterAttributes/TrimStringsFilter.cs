@@ -1,8 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using IT_Next.Extensions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace IT_Next.Filters;
+namespace IT_Next.Custom.FilterAttributes;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class TrimStringsFilter : ActionFilterAttribute
 {
     public override Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -20,12 +21,8 @@ public class TrimStringsFilter : ActionFilterAttribute
                     continue;
 
                 var stringValue = property.GetValue(model)?.ToString();
-                if (string.IsNullOrWhiteSpace(stringValue))
-                    continue;
 
-                stringValue = stringValue.Trim();
-                stringValue = Regex.Replace(stringValue, @"\s+", " ");
-                property.SetValue(model, stringValue);
+                property.SetValue(model, stringValue.TrimExtraSpaces());
             }
         }
 

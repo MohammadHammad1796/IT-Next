@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject IWebHostEnvironment Environment;
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -125,6 +127,13 @@
 						<div id="navbar_menu">
 							<ul class="first-ul">
 								<li> <a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+								@* ReSharper disable Html.PathError *@
+								@if (Environment.IsDevelopment())
+								{
+									<li> <a href="/swagger/index.html" target="_blank">Swagger</a></li>
+										@* ReSharper restore Html.PathError *@
+								
+								}
 								<li> <a href="it_home.html">Home</a>
 									<ul>
 										<li><a href="it_home.html">It Home Page</a></li>

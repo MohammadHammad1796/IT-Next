@@ -4,6 +4,7 @@
 }
 
 @section styles{
+<link rel="stylesheet" href="/css/dashboard/dataTable.css" asp-append-version="true" />
 <link rel="stylesheet" href="/css/dashboard/manageCategories.css" asp-append-version="true" />
 }
 <section>
@@ -11,7 +12,7 @@
 		New category
 	</button>
 </section>
-<section class="container-fluid">
+<section class="container-fluid dataTableSection">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="row">
@@ -27,7 +28,7 @@
 				</div>
 				<div class="col-md-7 col-sm-12 center mb-3" style="text-align: right;">
 					<label for="searchText">Search</label>
-					<input type="text" id="searchText" class="form-control" placeholder="Type 3 ~ 50 character."/>
+					<input type="text" id="searchText" autocomplete="off" class="form-control" placeholder="Type 2 ~ 50 character."/>
 				</div>
 			</div>
 				<div class="row sortSection">
@@ -85,7 +86,7 @@
 				<div class="modal-body">
 					<div class="mb-3">
 						<label asp-for="Name" class="col-form-label"></label>
-						<input asp-for="Name" class="form-control" />
+						<input autocomplete="off" asp-for="Name" class="form-control" />
 						<span asp-validation-for="Name"></span>
 					</div>
 				</div>
@@ -108,7 +109,7 @@
 			<form id="deleteItem">
 				<div class="modal-body">
 					<div class="mb-3">
-						<p>Are you sure you want to delete this categoy?</p>
+						<p id="deleteParagraph"></p>
 					</div>
 				</div>
 				<div class="modal-footer">

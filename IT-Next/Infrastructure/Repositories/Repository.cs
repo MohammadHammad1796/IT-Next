@@ -1,8 +1,8 @@
 ﻿using IT_Next.Core.Entities;
 using IT_Next.Core.Helpers;
 using IT_Next.Core.Repositories;
-using IT_Next.Extensions;
 using IT_Next.Infrastructure.Data;
+using IT_Next.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -52,5 +52,12 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEnti
         {
             DbSet.Remove(entity);
         });
+    }
+
+    public async Task<int> GetCountAsync(Expression<Func<TEntity, bool>>? conditions = null)
+    {
+        return conditions == null ?
+            await DbSet.CountAsync() :
+            await DbSet.CountAsync(conditions);
     }
 }
