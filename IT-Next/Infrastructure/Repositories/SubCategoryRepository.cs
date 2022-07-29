@@ -6,7 +6,9 @@ namespace IT_Next.Infrastructure.Repositories
 {
     public class SubCategoryRepository : UniqueFieldsRepository<SubCategory>, ISubCategoryRepository
     {
-        public SubCategoryRepository(ApplicationDbContext dbContext) : base(dbContext)
+        public SubCategoryRepository(ApplicationDbContext dbContext,
+            IQueryCustomization<SubCategory> queryCustomization)
+            : base(dbContext, queryCustomization)
         {
         }
     }

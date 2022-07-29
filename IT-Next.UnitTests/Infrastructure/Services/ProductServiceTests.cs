@@ -14,6 +14,7 @@ internal class ProductServiceTests
 {
     private Mock<IProductRepository> _productRepository;
     private Mock<IPhotoRepository> _photoRepository;
+    private Mock<ICategoryRepository> _categoryRepository;
     private ProductService _productService;
 
     [SetUp]
@@ -21,7 +22,9 @@ internal class ProductServiceTests
     {
         _productRepository = new Mock<IProductRepository>();
         _photoRepository = new Mock<IPhotoRepository>();
-        _productService = new ProductService(_productRepository.Object, _photoRepository.Object);
+        _categoryRepository = new Mock<ICategoryRepository>();
+        _productService = new ProductService(_productRepository.Object,
+         _photoRepository.Object, _categoryRepository.Object);
     }
 
     [Test]
@@ -144,5 +147,23 @@ internal class ProductServiceTests
 
         _photoRepository.Verify(ps => ps.Delete(product.ImagePath),
             Times.Once);
+    }
+
+    [Test]
+    public async Task IncludeCategoryAsync_WhenCalled_AssignCategoryToProduct()
+    {
+        var category = new Category { Id = 1, Name = "cat" };
+        _categoryRepository.Setup(r => r.GetByIdAsync(1))
+            .ReturnsAsync(category);
+        var product = new Product 
+        { 
+            SubCategory = new SubCategory{ CategoryId = 1, Category = null! }
+        };
+
+        await _productService.IncludeCategoryAsync(product);
+
+        Assert.That(product.SubCategory.Category, Is.Not.Null);
+        Assert.That(product.SubCategory.Category.Id, Is.EqualTo(category.Id));
+        Assert.That(product.SubCategory.Category.Name, Is.EqualTo(category.Name));
     }
 }

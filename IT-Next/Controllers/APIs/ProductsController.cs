@@ -74,6 +74,7 @@ public class ProductsController : Controller
         try
         {
             await _unitOfWork.CompleteAsync();
+            await _productService.IncludeCategoryAsync(product);
             return Ok(_mapper.Map<ProductResource>(product));
         }
         catch (Exception)
@@ -126,6 +127,7 @@ public class ProductsController : Controller
         if (haveImage)
             _productService.DeleteOldImage();
 
+        await _productService.IncludeCategoryAsync(productInDb);
         return Ok(_mapper.Map<ProductResource>(productInDb));
     }
 

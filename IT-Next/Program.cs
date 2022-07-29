@@ -1,3 +1,4 @@
+using IT_Next.Core.Entities;
 using IT_Next.Core.Repositories;
 using IT_Next.Core.Services;
 using IT_Next.Custom.FilterAttributes;
@@ -54,12 +55,16 @@ public class Program
         }
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IQueryCustomization<Category>, QueryCustomization<Category>>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IQueryCustomization<SubCategory>, QueryCustomization<SubCategory>>();
         services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
         services.AddScoped<ISubCategoryService, SubCategoryService>();
+        services.AddScoped<IQueryCustomization<Brand>, QueryCustomization<Brand>>();
         services.AddScoped<IBrandRepository, BrandRepository>();
         services.AddScoped<IBrandService, BrandService>();
+        services.AddScoped<IQueryCustomization<Product>, QueryCustomization<Product>>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IProductService, ProductService>();
 
