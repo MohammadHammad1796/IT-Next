@@ -6,7 +6,9 @@ namespace IT_Next.Infrastructure.Repositories;
 
 public class ProductRepository : UniqueFieldsRepository<Product>, IProductRepository
 {
-    public ProductRepository(ApplicationDbContext dbContext) : base(dbContext)
+    public ProductRepository(ApplicationDbContext dbContext,
+        IQueryCustomization<Product> queryCustomization)
+        : base(dbContext, queryCustomization)
     {
     }
 }

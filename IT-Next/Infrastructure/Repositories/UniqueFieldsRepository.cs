@@ -8,7 +8,9 @@ namespace IT_Next.Infrastructure.Repositories;
 public class UniqueFieldsRepository<TEntity> : Repository<TEntity>, IUniqueFieldsRepository<TEntity>
         where TEntity : EntityWithUniqueName
 {
-    public UniqueFieldsRepository(ApplicationDbContext dbContext) : base(dbContext)
+    public UniqueFieldsRepository(ApplicationDbContext dbContext,
+        IQueryCustomization<TEntity> queryCustomization)
+        : base(dbContext, queryCustomization)
     {
     }
 

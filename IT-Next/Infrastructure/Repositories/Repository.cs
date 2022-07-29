@@ -11,12 +11,14 @@ namespace IT_Next.Infrastructure.Repositories;
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
 {
     protected DbSet<TEntity> DbSet;
-    private readonly QueryCustomization<TEntity> _queryCustomization;
+    protected readonly IQueryCustomization<TEntity> QueryCustomization;
+    protected readonly ApplicationDbContext DbContext;
 
-    public Repository(ApplicationDbContext dbContext)
+    public Repository(ApplicationDbContext dbContext, IQueryCustomization<TEntity> queryCustomization)
     {
+        DbContext = dbContext;
         DbSet = dbContext.Set<TEntity>();
-        _queryCustomization = new QueryCustomization<TEntity>();
+        QueryCustomization = queryCustomization;
     }
 
     public virtual async Task AddAsync(TEntity entity)
@@ -41,7 +43,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEnti
         IQueryable<TEntity> queryable = DbSet;
 
         if (query != null)
-            queryable = _queryCustomization.ApplyQuery(queryable, query);
+            queryable = QueryCustomization.ApplyQuery(queryable, query);
 
         return await queryable.ToListAsync();
     }

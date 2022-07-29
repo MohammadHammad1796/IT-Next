@@ -1,11 +1,12 @@
 ﻿using IT_Next.Core.Entities;
 using IT_Next.Core.Helpers;
+using IT_Next.Core.Repositories;
 using IT_Next.Extensions;
 using IT_Next.Infrastructure.Extensions;
 
 namespace IT_Next.Infrastructure.Repositories;
 
-public class QueryCustomization<TEntity> where TEntity : BaseEntity
+public class QueryCustomization<TEntity> : IQueryCustomization<TEntity> where TEntity : BaseEntity
 {
     public virtual IQueryable<TEntity> ApplyQuery(IQueryable<TEntity> queryable, Query<TEntity> query)
     {

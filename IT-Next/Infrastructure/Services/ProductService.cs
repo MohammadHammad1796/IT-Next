@@ -10,11 +10,14 @@ public class ProductService : IProductService
     private readonly IPhotoRepository _photoRepository;
     private string? _oldImage;
     private const string ProductImagesFolderName = "products";
+    private readonly ICategoryRepository _categoryRepository;
 
-    public ProductService(IProductRepository productRepository, IPhotoRepository photoRepository)
+    public ProductService(IProductRepository productRepository,
+        IPhotoRepository photoRepository, ICategoryRepository categoryRepository)
     {
         _productRepository = productRepository;
         _photoRepository = photoRepository;
+        _categoryRepository = categoryRepository;
     }
 
     public async Task<bool> IsUniqueAsync(string name, int id)
@@ -64,5 +67,12 @@ public class ProductService : IProductService
     public void UpdateTime(Product product)
     {
         product.LastUpdate = DateTime.UtcNow;
+    }
+
+    public async Task IncludeCategoryAsync(Product product)
+    {
+        var categoryId = product.SubCategory.CategoryId;
+        var category = await _categoryRepository.GetByIdAsync(categoryId);
+        product.SubCategory.Category = category!;
     }
 }

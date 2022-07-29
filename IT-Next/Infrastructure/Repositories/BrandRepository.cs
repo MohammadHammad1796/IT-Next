@@ -6,7 +6,9 @@ namespace IT_Next.Infrastructure.Repositories;
 
 public class BrandRepository : UniqueFieldsRepository<Brand>, IBrandRepository
 {
-    public BrandRepository(ApplicationDbContext dbContext) : base(dbContext)
+    public BrandRepository(ApplicationDbContext dbContext,
+        IQueryCustomization<Brand> queryCustomization)
+        : base(dbContext, queryCustomization)
     {
     }
 }

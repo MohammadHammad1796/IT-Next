@@ -6,7 +6,9 @@ namespace IT_Next.Infrastructure.Repositories;
 
 public class CategoryRepository : UniqueFieldsRepository<Category>, ICategoryRepository
 {
-    public CategoryRepository(ApplicationDbContext dbContext) : base(dbContext)
+    public CategoryRepository(ApplicationDbContext dbContext,
+        IQueryCustomization<Category> queryCustomization)
+        : base(dbContext, queryCustomization)
     {
     }
 }

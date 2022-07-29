@@ -15,4 +15,6 @@ public interface IProductService
     void DeleteImage(Product product);
 
     void UpdateTime(Product product);
+
+    Task IncludeCategoryAsync(Product product);
 }
