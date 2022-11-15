@@ -40,7 +40,7 @@ namespace IT_Next.Infrastructure.Data.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("IT_Next.Core.Entities.Category", b =>
@@ -61,7 +61,46 @@ namespace IT_Next.Infrastructure.Data.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("IT_Next.Core.Entities.ContactMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("MobileNumber")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContactMessages");
                 });
 
             modelBuilder.Entity("IT_Next.Core.Entities.Product", b =>
@@ -113,7 +152,7 @@ namespace IT_Next.Infrastructure.Data.Migrations
 
                     b.HasIndex("SubCategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("IT_Next.Core.Entities.SubCategory", b =>
@@ -139,19 +178,19 @@ namespace IT_Next.Infrastructure.Data.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("SubCategories", (string)null);
+                    b.ToTable("SubCategories");
                 });
 
             modelBuilder.Entity("IT_Next.Core.Entities.Product", b =>
                 {
                     b.HasOne("IT_Next.Core.Entities.Brand", "Brand")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("IT_Next.Core.Entities.SubCategory", "SubCategory")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("SubCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -164,12 +203,27 @@ namespace IT_Next.Infrastructure.Data.Migrations
             modelBuilder.Entity("IT_Next.Core.Entities.SubCategory", b =>
                 {
                     b.HasOne("IT_Next.Core.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("SubCategories")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("IT_Next.Core.Entities.Brand", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("IT_Next.Core.Entities.Category", b =>
+                {
+                    b.Navigation("SubCategories");
+                });
+
+            modelBuilder.Entity("IT_Next.Core.Entities.SubCategory", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

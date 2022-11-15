@@ -11,13 +11,16 @@ namespace IT_Next.UnitTests.Infrastructure.Services;
 internal class SubCategoryServiceTests
 {
     private Mock<ISubCategoryRepository> _subCategoryRepository;
+    private Mock<ICategoryRepository> _categoryRepository;
     private SubCategoryService _subCategoryService;
 
     [SetUp]
     public void Setup()
     {
         _subCategoryRepository = new Mock<ISubCategoryRepository>();
-        _subCategoryService = new SubCategoryService(_subCategoryRepository.Object);
+        _categoryRepository = new Mock<ICategoryRepository>();
+        _subCategoryService = new SubCategoryService(_subCategoryRepository.Object, 
+            _categoryRepository.Object);
     }
 
     [Test]

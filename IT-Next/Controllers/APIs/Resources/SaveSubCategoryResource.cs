@@ -1,14 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using IT_Next.Controllers.SharedModels;
 
 namespace IT_Next.Controllers.APIs.Resources;
 
-public class SaveSubCategoryResource
+public class SaveSubCategoryResource : SaveSubCategorySharedModel
 {
-    public int Id { get; set; }
-
-    [MaxLength(100, ErrorMessage = "The {0} field maximum length is {1}.")]
-    [MinLength(2, ErrorMessage = "The {0} field minimum length is {1}.")]
-    public string Name { get; set; }
-
-    public int CategoryId { get; set; }
 }

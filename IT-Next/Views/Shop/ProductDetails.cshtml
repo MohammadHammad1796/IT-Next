@@ -1,0 +1,233 @@
+@using System.Web
+@model ProductDetailsViewModel;
+@{
+    ViewData["title"] = string.Join(" - ", Model.BrandName, Model.Name);
+}
+
+@section metaTags
+{
+<meta name="description" content="@Model.Description">
+<meta property="og:description" content="@Model.Description">
+<meta property="og:image" content="@($"{Context.Request.Scheme}://{Context.Request.Host}{Model.ImagePath}")">
+<meta property="og:url" content="@($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}")" />
+<meta property="og:title" content="IT-Next - @ViewData["title"]">
+<meta name="title" content="IT-Next - @ViewData["title"]">
+<meta property="og:type" content="website" />
+}
+
+@section styles
+{
+    <!-- zoom effect -->
+    <link rel="stylesheet" href="/css/hizoom.css">
+    <!-- end zoom effect -->
+
+    <style>
+        .breadcrumb li:last-of-type {
+            padding-bottom: 20px;
+        }
+
+        .social_icons li a:hover {
+            color: white !important;
+            background-color: #039ee3;
+            border-radius: 50%;
+            padding: 5px;
+        }
+    </style>
+}
+
+@section banner
+{
+<div id="inner_banner" class="section inner_banner_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="full">
+                    <div class="title-holder">
+                        <div class="title-holder-cell text-left">
+                            <h1 class="page-title">@ViewData["title"]</h1>
+                            <ol class="breadcrumb">
+                                <li>Products</li>
+                                <li>@Model.CategoryName</li>
+                                <li>
+                                    <a asp-controller="Shop" asp-action="ListProducts"
+                                        asp-route-categoryName="@Model.CategoryName"
+                                        asp-route-subCategoryName="@Model.SubCategoryName">
+                                        @Model.SubCategoryName
+                                    </a>
+                                </li>
+                                <li class="active">
+                                    <a asp-controller="Shop" asp-action="GetProduct"
+                                        asp-route-productName="@Model.Name">
+                                        @ViewData["title"]
+                                    </a>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<!-- section -->
+<div class="section padding_layout_1 product_detail">
+    <div class="container">
+        <div class="row">
+            <div class="offset-md-1 col-md-10">
+                <div class="row">
+                    <div class="col-xl-6 col-lg-12 col-md-12">
+                        <div class="product_detail_feature_img hizoom hi2">
+                            <div class='hizoom hi2'> <img src="@Model.ImagePath" alt='@ViewData["title"]' /> </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-12 col-md-12 product_detail_side detail_style1">
+                        <div class="product-heading">
+                            <h2>@ViewData["title"]</h2>
+                        </div>
+                        <div class="product-detail-side">
+                            @if (Model.Discount > 0)
+                            {
+                                <span><del>$@String.Format("{0:0.00}", Model.Price)</del></span>
+                                <span class="new-price">$@String.Format("{0:0.00}", Model.Price * (1 - Model.Discount))</span>
+                            }
+                            else
+                            {
+                                <span class="new-price">$@String.Format("{0:0.00}", Model.Price)</span>
+                            }
+                        </div>
+                        <div class="detail-contant">
+                            <p style="text-align: justify;">
+                                @Model.Description
+                                <br>
+                                <span class="stock">@Model.Quantity in stock</span>
+                                <br>
+                                <span id="lastUpdate" class="stock">Last update @Model.LastUpdate.ToString("dd-MM-yyyy hh:mm tt")</span>
+                            </p>
+                        </div>
+                        <div class="share-post"> <a href="#" class="share-text">Share</a>
+                            <ul class="social_icons">
+                                @{
+                                    var encodedUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{HttpUtility.UrlEncode(Context.Request.Path)}";
+                                }
+                                <li>
+                                    <a href='https://www.facebook.com/sharer/sharer.php?u=@encodedUrl' target="_blank">
+                                        <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href='https://t.me/share/url?url=@encodedUrl' target="_blank">
+                                        <i class="fab fa-telegram-plane" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href='https://wa.me/?text=@encodedUrl' target="_blank">
+                                        <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                                @* <li><a href="#"><i class="fab fa-twitter" aria-hidden="true"></i></a></li>
+                                <li><a href="#"><i class="fab fa-google-plus-g" aria-hidden="true"></i></a></li>
+                                <li><a href="#"><i class="fab fa-instagram" aria-hidden="true"></i></a></li>
+                                <li><a href="#"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a></li> *@
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @* <div class="col-md-3">
+                <div class="side_bar">
+                    <div class="side_bar_blog">
+                        <h4>SEARCH</h4>
+                        <div class="side_bar_search">
+                            <div class="input-group stylish-input-group">
+                                <input class="form-control" placeholder="Search" type="text">
+                                <span class="input-group-addon">
+                                    <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="side_bar_blog">
+                        <h4>GET A QUOTE</h4>
+                        <p>An duo lorem altera gloriatur. No imperdiet adver sarium pro. No sit sumo lorem. Mei ea eius
+                            elitr consequ unturimperdiet.</p>
+                        <a class="btn sqaure_bt" href="it_service.html">View Service</a>
+                    </div>
+                    <div class="side_bar_blog">
+                        <h4>OUR SERVICE</h4>
+                        <div class="categary">
+                            <ul>
+                                <li><a href="it_data_recovery.html"><i class="fa fa-angle-right"></i> Data recovery</a>
+                                </li>
+                                <li><a href="it_computer_repair.html"><i class="fa fa-angle-right"></i> Computer
+                                        repair</a></li>
+                                <li><a href="it_mobile_service.html"><i class="fa fa-angle-right"></i> Mobile
+                                        service</a></li>
+                                <li><a href="it_network_solution.html"><i class="fa fa-angle-right"></i> Network
+                                        solutions</a></li>
+                                <li><a href="it_techn_support.html"><i class="fa fa-angle-right"></i> Technical
+                                        support</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="side_bar_blog">
+                        <h4>RECENT NEWS</h4>
+                        <div class="categary">
+                            <ul>
+                                <li><a href="it_data_recovery.html"><i class="fa fa-angle-right"></i> Land lights let be
+                                        divided</a></li>
+                                <li><a href="it_computer_repair.html"><i class="fa fa-angle-right"></i> Seasons over
+                                        bearing air</a></li>
+                                <li><a href="it_mobile_service.html"><i class="fa fa-angle-right"></i> Greater open
+                                        after grass</a></li>
+                                <li><a href="it_network_solution.html"><i class="fa fa-angle-right"></i> Gathered was
+                                        divide second</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="side_bar_blog">
+                        <h4>TAG</h4>
+                        <div class="tags">
+                            <ul>
+                                <li><a href="#">Bootstrap</a></li>
+                                <li><a href="#">HTML5</a></li>
+                                <li><a href="#">Wordpress</a></li>
+                                <li><a href="#">Bootstrap</a></li>
+                                <li><a href="#">HTML5</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div> *@
+        </div>
+    </div>
+</div>
+<!-- end section -->
+
+@section scripts
+{
+<!-- zoom effect -->
+<script src='/js/hizoom.js'></script>
+<script>
+    $('.hi1').hiZoom({
+        width: 300,
+        position: 'right'
+    });
+    $('.hi2').hiZoom({
+        width: 400,
+        position: 'right'
+    });
+</script>
+
+<script src="/js/dateTimeHelpers.js" asp-append-version="true"></script>
+<script>
+    $(window).on("load", function () {
+        const ignoreTimeZone = false;
+        const timeString = `@Model.LastUpdate.ToString("yyyy-MM-ddTHH:mm:ss.fff")`;
+        const dateTimeObject = GetDateTimeObjectAsClientZone(timeString, ignoreTimeZone);
+        const formattedTime = FormatDateTime(dateTimeObject, "dd-MM-yyyy hh:mm a");
+        $("#lastUpdate").text(`Last update ${formattedTime}`);
+    });
+</script>
+}

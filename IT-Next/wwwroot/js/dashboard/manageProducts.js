@@ -61,55 +61,13 @@ function RenderItemsTable(items, table) {
   for (let products of items) {
 	if (!isOdd) isOdd = true;
 	else isOdd = false;
-	AddRow(table, products, isOdd);
+	AddRow(table, products, false, isOdd);
   }
 }
 
-function GetDateTimeObjectAsClientZone(utcDateTimeString) {
-	const dateTime = new Date(utcDateTimeString);
-	const differenceMinutes = 0 - new Date().getTimezoneOffset();
-	dateTime.setMinutes(dateTime.getMinutes() + differenceMinutes);
-	return dateTime;
-}
-
-function FormatDateTime(dateObject, format) {
-	let dateTimePoints = [];
-	dateTimePoints["yyyy"] = dateObject.getFullYear();
-	dateTimePoints["yy"] = dateTimePoints["yyyy"].toString().substr(2, 2);
-	dateTimePoints["MM"] = (dateObject.getMonth() + 1) < 10 ? `0${dateObject.getMonth() + 1}` : (dateObject.getMonth() + 1);
-	dateTimePoints["M"] = dateTimePoints["MM"] < 10 ? dateTimePoints["MM"].toString().substr(1, 1) : dateTimePoints["MM"];
-	dateTimePoints["dd"] = dateObject.getDate() < 10 ? `0${dateObject.getDate()}` : dateObject.getDate();
-	dateTimePoints["d"] = dateTimePoints["dd"] < 10 ? dateTimePoints["dd"].toString().substr(1, 1) : dateTimePoints["dd"];
-	dateTimePoints["HH"] = dateObject.getHours() < 10 ? `0${dateObject.getHours()}` : dateObject.getHours();
-	dateTimePoints["H"] = dateTimePoints["HH"] < 10 ? dateTimePoints["HH"].toString().substr(1, 1) : dateTimePoints["HH"];
-	let hhValue, aValue;
-	if (dateTimePoints["HH"] === 0 || dateTimePoints["HH"] === 24) {
-		hhValue = 12;
-		aValue = "AM";
-	}
-	else if (dateTimePoints["HH"] > 12) {
-		hhValue = dateTimePoints["HH"] - 12;
-		aValue = "PM";
-	} else {
-		hhValue = dateTimePoints["HH"];
-		aValue = "AM";
-	}
-	dateTimePoints["hh"] = hhValue.toString().length < 2 && hhValue < 10 ? `0${hhValue}` : hhValue;
-	dateTimePoints["a"] = aValue;
-	dateTimePoints["h"] = dateTimePoints["hh"] < 10 ? dateTimePoints["hh"].toString().substr(1, 1) : dateTimePoints["hh"];
-	dateTimePoints["mm"] = dateObject.getMinutes().toString().length < 2 && dateObject.getMinutes() < 10 ? `0${dateObject.getMinutes()}` : dateObject.getMinutes();
-	dateTimePoints["m"] = dateTimePoints["mm"] < 10 ? dateTimePoints["mm"].toString().substr(1, 1) : dateTimePoints["mm"];
-	const neededValues = format.split(/[-:/ ]/);
-	for (let neededValue of neededValues) {
-		const regex = new RegExp(`(${neededValue})`, "g");
-		format = format.replace(regex, dateTimePoints[neededValue]);
-	}
-	return format;
-}
-
-function AddRow(table, product, isOdd = null) {
-  if (isOdd === null)
-	isOdd = $(table).find("tr:last").hasClass("odd") ? false : true;
+function AddRow(table, product, ignoreTimeZone, isOdd) {
+  if (isOdd == null)
+	isOdd = $(table).find("tr:last").hasClass("odd") ? true : false; 
   let row = `<tr id='item_${product.id}'`;
   if (!isOdd) row += 'class="odd"';
   row += `><td head='Name'>${product.name}</td>
@@ -119,10 +77,11 @@ function AddRow(table, product, isOdd = null) {
 						<td head='Price'>${product.price}</td>
 						<td head='Discount'>${product.discount}</td>
 						<td head='Quantity'>${product.quantity}</td>
-						<td head='Last Update' class="notsearchable">${FormatDateTime(GetDateTimeObjectAsClientZone(product.lastUpdate), "dd-MM-yyyy hh:mm a")}</td>
+						<td head='Last Update' class="notsearchable">${FormatDateTime(GetDateTimeObjectAsClientZone(product.lastUpdate, ignoreTimeZone), "dd-MM-yyyy hh:mm a")}</td>
 						<td head='Image' class="imageColumn"><img src="${product.imagePath}" style="width:100%;"/></td>
 						<td head='Description'>${product.description}</td>
 						<td head='Actions'>
+						<a href="/products/${product.categoryName}/${product.subCategoryName}/${product.name}" target="_blank" data-id="1"><i class="fas fa-eye me-3 mb-3"></i></a>
 						<a href="#" class="edit-btn" data-id="${product.id}"><i class="fas fa-edit me-3 mb-3"></i></a>
 						<a href="#" class="remove-btn" data-id="${product.id}"><i class="fas fa-trash"></i></a>
 						</td>
@@ -356,7 +315,7 @@ function RenderPaginationButtons(pageNumber, pageSize, count) {
 function EnableSearch(queryObject, table) {
   $("#searchText").on("change paste keyup", function () {
 	let searchText = $(this).val().trim();
-	searchText = searchText.replace("\s+", " ");
+	searchText = searchText.replace("[ ]{2,}", " ");
 	if (searchText.length < 1 || searchText.length > 50)
 	  if (queryObject.searchQuery === "") return;
 	  else {
@@ -469,9 +428,10 @@ function UpdateRow(id, product) {
   row.find("td").eq(4).text(product.price);
   row.find("td").eq(5).text(product.discount);
   row.find("td").eq(6).text(product.quantity);
-  row.find("td").eq(7).text(FormatDateTime(GetDateTimeObjectAsClientZone(product.lastUpdate), "dd-MM-yyyy hh:mm a"));
+  row.find("td").eq(7).text(FormatDateTime(GetDateTimeObjectAsClientZone(product.lastUpdate, true), "dd-MM-yyyy hh:mm a"));
   row.find("td:eq(8)").find("img:eq(0)").attr("src", product.imagePath);
   row.find("td:eq(9)").text(product.description);
+  row.find("td:eq(10) > a > i.fa-eye").parent().attr("href", `/products/${product.categoryName}/${product.subCategoryName}/${product.name}`);
 }
 
 function EnableMobileSorting(queryObject, table) {
@@ -556,7 +516,7 @@ function SaveItem(resource, saveType, table) {
 			data: resource,
 			statusCode: {
 				200: function (product) {
-					AddRow(table, product);
+					AddRow(table, product, true, null);
 					entries.from = entries.from === 0 ? ++entries.from : entries.from;
 					entries.to++;
 					entries.all++;

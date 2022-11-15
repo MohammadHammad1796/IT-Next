@@ -11,6 +11,7 @@
 *.sln.docstates
 appsettings.json
 **/wwwroot/images/products/
+.vscode/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

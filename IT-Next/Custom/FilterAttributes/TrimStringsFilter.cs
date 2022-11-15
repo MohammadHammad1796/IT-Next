@@ -1,4 +1,4 @@
-﻿using IT_Next.Extensions;
+﻿using IT_Next.Core.Extensions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace IT_Next.Custom.FilterAttributes;

@@ -263,7 +263,7 @@ function RenderPaginationButtons(pageNumber, pageSize, count) {
 function EnableSearch(queryObject, table) {
   $("#searchText").on("change paste keyup", function () {
 	let searchText = $(this).val().trim();
-	searchText = searchText.replace("\s+", " ");
+	searchText = searchText.replace("[ ]{2,}", " ");
 	if (searchText.length < 2 || searchText.length > 50)
 	  if (queryObject.searchQuery === "") return;
 	  else {

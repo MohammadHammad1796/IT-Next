@@ -12,6 +12,16 @@
       "files": [
         "typeahead.bundle.min.js"
       ]
+    },
+    {
+      "provider": "unpkg",
+      "library": "mapbox-gl@2.9.2",
+      "destination": "wwwroot/libs/mapbox-gl2.9.2/",
+      "files": [
+        "dist/mapbox-gl.css",
+        "dist/mapbox-gl.js",
+        "dist/mapbox-gl.js.map"
+      ]
     }
   ]
 }

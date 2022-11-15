@@ -1,0 +1,42 @@
+@using IT_Next.Core.Entities
+@using IT_Next.Core.Helpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using AutoMapper
+@using IT_Next.Controllers.UIs.ViewModels
+@using IT_Next.Core.Repositories
+@inject ISubCategoryRepository SubCategoryRepository;
+@inject IMapper Mapper;
+
+@{
+	var query = new Query<SubCategory>
+		{
+			Conditions = s => s.Products.Any(p => p.Quantity > 0)
+		};
+	query.AddIncludeProperty(subCategory => subCategory.Category);
+	var subCategories = await SubCategoryRepository.GetAsync(query);
+
+	var navigationViewModel = Mapper.Map<ProductsNavigationByCategoriesViewModel>(subCategories);
+	if (navigationViewModel.CategoriesNavigation.Any())
+	{
+		<ul>
+			@foreach (var category in navigationViewModel.CategoriesNavigation)
+			{
+				<li>
+					<a>@category.Name</a>
+					<ul>
+						@foreach (var subCategory in category.SubCategories)
+						{
+							<li>
+								<a asp-controller="Shop" asp-action="ListProducts" 
+								asp-route-categoryName="@category.Name"
+								asp-route-subCategoryName="@subCategory.Name">
+									@subCategory.Name
+								</a>
+							</li>
+						}
+					</ul>
+				</li>
+			}
+		</ul>
+	}
+}

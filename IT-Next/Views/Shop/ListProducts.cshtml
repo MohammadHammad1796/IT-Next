@@ -1,0 +1,244 @@
+@{
+    ViewData["title"] = string.Join(" ", "Products", ViewData["subCategoryName"]);
+}
+
+@section metaTags
+{
+<meta name="description" content='IT-Next - @ViewData["title"]'>
+<meta property="og:description" content='IT-Next - @ViewData["title"]'>
+<meta property="og:image"
+    content="@($"{Context.Request.Scheme}://{Context.Request.Host}/images/it_service/Products.png")">
+<meta property="og:url" content="@($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}")" />
+<meta property="og:title" content='IT-Next - @ViewData["title"]'>
+<meta name="title" content='IT-Next - @ViewData["title"]'>
+<meta property="og:type" content="website" />
+}
+
+@section styles
+{
+<style>
+    @@media (min-width: 768px) {
+        #filters {
+            border: 1px solid #007bff;
+            padding: 3%;
+        }
+    }
+
+    .form-check-label {
+        color: black;
+    }
+
+    .side_bar_blog {
+        float: none;
+        margin-bottom: 25px;
+    }
+
+    .range_container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sliders_control {
+        position: relative;
+    }
+
+    .form_control {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        font-size: 24px;
+        color: #635a5a;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        pointer-events: all;
+        width: 24px;
+        height: 24px;
+        background-color: #fff;
+        border-radius: 50%;
+        box-shadow: 0 0 0 1px #C6C6C6;
+        cursor: pointer;
+    }
+
+    input[type=range]::-moz-range-thumb {
+        -webkit-appearance: none;
+        pointer-events: all;
+        width: 24px;
+        height: 24px;
+        background-color: #fff;
+        border-radius: 50%;
+        box-shadow: 0 0 0 1px #C6C6C6;
+        cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover {
+        background: #f7f7f7;
+    }
+
+    input[type=range]::-webkit-slider-thumb:active {
+        box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
+        -webkit-box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
+    }
+
+    input[type="number"] {
+        color: #8a8383;
+        width: 50px;
+        height: 30px;
+        font-size: 20px;
+        border: none;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        opacity: 1;
+    }
+
+    input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 2px;
+        width: 100%;
+        position: absolute;
+        background-color: #C6C6C6;
+        pointer-events: none;
+    }
+
+    #fromSlider {
+        height: 0;
+        z-index: 1;
+    }
+
+    @@media (min-width: 430px) {
+        #sortSection > .form-check {
+            display: inline-block;
+            margin-left: 1rem;
+        }
+    }
+
+    #pagination > input.active {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    #pagination > a, #pagination > input {
+        margin-left: 1rem;
+    }
+
+    #pagination > input {
+        width: 35px;
+    }
+
+</style>
+}
+
+@section banner
+{
+<div id="inner_banner" class="section inner_banner_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="full">
+                    <div class="title-holder">
+                        <div class="title-holder-cell text-left">
+                            <h1 class="page-title">Products</h1>
+                            <ol class="breadcrumb">
+                                <li>Products</li>
+                                <li>@ViewData["categoryName"]</li>
+                                <li class="active">
+                                    <a asp-controller="Shop" asp-action="ListProducts"
+                                        asp-route-categoryName="@ViewData["categoryName"]"
+                                        asp-route-subCategoryName="@ViewData["subCategoryName"]">
+                                        @ViewData["subCategoryName"]
+                                    </a>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<!-- section -->
+<div class="section padding_layout_1 product_list_main">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <form class="side_bar mb-3" id="filters">
+                    <h3>FILTERS</h3>
+                    <div class="side_bar_blog">
+                        <div class="side_bar_search">
+                            <div class="input-group stylish-input-group">
+                                <input class="form-control" placeholder="Search" type="search" id="searchQuery" maxlength="50">
+                                <span class="input-group-addon">
+                                    <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="side_bar_blog" id="priceRange">
+                    </div>
+                    <div class="side_bar_blog" id="brands">
+                    </div>
+                    <div class="side_bar_blog">
+                        <button type="submit" id="apply" class="btn sqaure_bt" style="width: 100%;">Apply</button>
+                    </div>
+                </form>
+                <div class="side_bar" id="relatedSubCategories">
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-sm-3 col-xs-12 text-sm-left text-center mb-3">
+                        <label for="pageSize">Show</label>
+                        <select id="pageSize" class="form-control" style="display: inline-block; width: auto;">
+                            <option value="12" selected="selected">12</option>
+                            <option value="24">24</option>
+                            <option value="48">48</option>
+                            <option value="96">96</option>
+                        </select>
+                    </div>
+                    <div id="sortSection" class="col-sm-9 col-xs-12 text-sm-right text-center">
+                        <label for="sortBy">Sort By</label>
+                        <select id="sortBy" class="form-control mb-3" style="width: auto; display: inline-block;">
+                            <option value="id" selected="selected">Latest</option>
+                            <option value="name">Name</option>
+                            <option value="price">Price</option>
+                            <option value="brand">Brand</option>
+                        </select>
+                        <div class="form-check mb-1">
+                            <input class="form-check-input" type="radio" id="sortAsc" name="sort" value="asc">
+                            <label class="form-check-label" for="sortAsc">
+                                Ascending
+                            </label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" id="sortDesc" name="sort" value="desc" checked="checked">
+                            <label class="form-check-label" for="sortDesc">
+                                Descending
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row"  id="products">
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 col-xs-12 text-sm-left text-center mb-3" id="countInfo"></div>
+                    <div class="col-sm-6 col-xs-12 text-sm-right text-center mb-3" id="pagination">
+                        <a>Previous</a>
+                        <a>Next</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end section -->
+
+@section scripts
+{
+<script src="/js/listProducts.js" asp-append-version="true"></script>
+}

@@ -44,7 +44,14 @@ section {
 }
 
 @media (min-width: 761px) {
+    #items {
+        max-width: none;
+        width: auto;
+    }
+    #items td, #items th {
+        width: 130px;
+    }
     #items .imageColumn {
-        width: 15%;
+        width: 200px;
     }
 }

@@ -1,0 +1,54 @@
+@using IT_Next.Controllers.UIs
+
+@{
+	Layout = ApplicationLayout._CustomerLayout.ToString();
+}
+
+@section metaTags
+{
+  <meta name="description" content="Not Found Page">
+  <meta property="og:description" content="Not Found Page">
+  <meta property="og:image" content="@($"{Context.Request.Scheme}://{Context.Request.Host}/images/logos/it_logo_square.png")">
+  <meta property="og:url" content="@($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}")" />
+  <meta property="og:title" content="IT-Next - Not Found">
+  <meta name="title" content="IT-Next - Not Found">
+  <meta property="og:type" content="website" />
+}
+
+@section banner
+{
+	<div id="inner_banner" class="section inner_banner_section">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="full">
+						<div class="title-holder">
+							<div class="title-holder-cell text-left">
+								<h1 class="page-title">Not Found</h1>
+								<ol class="breadcrumb">
+									<li class="active">Not Found</li>
+								</ol>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+<!-- section -->
+<div class="section padding_layout_1">
+  <div class="container">
+	<div class="row">
+	  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+		<div class="center margin_bottom_30_all"> <img class="margin_bottom_30_all" src="/images/it_service/404_error_img.png" alt="#"> </div>
+		<div class="heading text_align_center">
+		  <h2>OOOPS, THIS PAGE COULD NOT BE FOUND!</h2>
+		</div>
+		<div class="center"> <a class="btn sqaure_bt light_theme_bt" asp-controller="Main" asp-action="Home">Back Home</a> </div>
+	  </div>
+	</div>
+  </div>
+</div>
+<!-- end section -->

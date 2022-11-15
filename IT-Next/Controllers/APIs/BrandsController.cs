@@ -4,11 +4,12 @@ using IT_Next.Core.Entities;
 using IT_Next.Core.Helpers;
 using IT_Next.Core.Repositories;
 using IT_Next.Core.Services;
+using IT_Next.Custom.RouteAttributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IT_Next.Controllers.APIs;
 
-[Route("api/brands")]
+[ApiRoute("brands")]
 [ApiController]
 public class BrandsController : Controller
 {

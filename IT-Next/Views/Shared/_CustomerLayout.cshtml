@@ -1,0 +1,437 @@
+﻿@inject IWebHostEnvironment Environment;
+@inject IConfiguration Configuration;
+
+<!DOCTYPE html>
+<html lang="en">
+
+@* ReSharper disable once MissingTitleTag *@
+
+<head>
+	@if (ViewData.ContainsKey("title"))
+	{
+		<title>IT-Next - @ViewData["title"]</title>
+	}
+	else
+	{
+		<title>IT-Next</title>
+	}
+	<!-- basic -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- mobile metas -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+	<!-- site metas -->
+	<meta name="google-site-verification" content="J6y-QWq9JEPj76p2qDkTCbnu7SZ59srUAWd-gx5oSd8" />
+	<meta property="fb:app_id" content='@Configuration["Facebook:AppId"]'>
+
+	@await RenderSectionAsync("metaTags", required: false)
+	<!-- site icons -->
+	<link rel="icon" href="/images/fevicon/fevicon.png" type="image/gif" />
+	<!-- bootstrap css -->
+	<link rel="stylesheet" href="/css/bootstrap.min.css" />
+
+	<environment include="Development">
+		@* <link rel="stylesheet" href="/libs/bootstrap5.2.0/css/bootstrap.min.css" /> *@
+		<link rel="stylesheet" href="/libs/fontawesome5.10.0/css/all.min.css" />
+		<link href="/libs/mapbox-gl2.9.2/dist/mapbox-gl.css" rel="stylesheet" />
+	</environment>
+	<environment exclude="Development">
+		@* <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" 
+			  asp-fallback-href="/libs/bootstrap5.2.0/css/bootstrap.min.css" rel="stylesheet"
+			  integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" 
+			  crossorigin="anonymous"> *@
+		<link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" 
+			  asp-fallback-href="/libs/fontawesome5.10.0/css/all.min.css"
+			  integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" 
+			  crossorigin="anonymous">
+		
+		<link href="https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css" rel="stylesheet" 
+			  asp-fallback-href="/libs/mapbox-gl2.9.2/dist/mapbox-gl.css">
+	</environment>
+
+	<!-- Site css -->
+	<link rel="stylesheet" href="/css/style.css" />
+	<!-- responsive css -->
+	<link rel="stylesheet" href="/css/responsive.css" />
+	<!-- colors css -->
+	<link rel="stylesheet" href="/css/colors1.css" />
+	<!-- custom css -->
+	<link rel="stylesheet" href="/css/custom.css" />
+	<!-- wow Animation css -->
+	<link rel="stylesheet" href="/css/animate.css" />
+
+	@* <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css' rel='stylesheet' /> *@
+
+	<style>
+		#navbar_menu li.has-sub a.active {
+			color: #039ee3 !important;
+		}
+
+		#navbar_menu.small-screen li.has-sub a.active {
+			color: #039ee3 !important;
+		}
+
+		.breadcrumb li a {
+			color: #fff;
+		}
+
+		.breadcrumb li.active a {
+			color: #039ee3;
+		}
+
+		#back-to-top {
+			border-radius: 45%;
+			display: none;
+			position: fixed;
+			right: 30px;
+			bottom: 30px;
+			z-index: 11;
+			min-width: auto;
+			block-size: 58px;
+			line-height: 24px;
+			width: 44px;
+		}
+
+		#navbar_menu li.has-sub li.has-sub a.active:hover {
+			color: white !important;
+		}
+	</style>
+	@await RenderSectionAsync("styles", required: false)
+</head>
+
+<body id="default_theme">
+	<!-- loader -->
+	<div class="bg_load"> <img class="loader_animation" src="/images/loaders/loader_1.png" alt="#" /> </div>
+	<!-- end loader -->
+	<!-- header -->
+	<header id="default_header" class="header_style_1">
+		<!-- header top -->
+		<div class="header_top">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8">
+						<div class="full">
+							<div class="topbar-left">
+								<ul class="list-inline">
+									<li>
+										<span>
+											<i class="fas fa-home"></i>
+										</span>
+										<span class="topbar-hightlight">Damascus, Mazzeh, Western village, Ward Al-Sham
+											side</span>
+									</li>
+									<li>
+										<span>
+											<i class="far fa-envelope"></i>
+										</span>
+										<span class="topbar-hightlight">
+											<a href="mailto:itsolution1796@gmail.com">itsolution1796@gmail.com</a>
+										</span>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4 right_section_header_top">
+						<div class="float-right">
+							<div class="social_icon">
+								<ul class="list-inline">
+									<li>
+										<a class="fab fa-facebook-f" href="https://www.facebook.com/" title="Facebook"
+											target="_blank"></a>
+									</li>
+									<li>
+										<a class="fab fa-google-plus-g" href="https://plus.google.com/" title="Google+"
+											target="_blank"></a>
+									</li>
+									<li>
+										<a class="fab fa-twitter" href="https://twitter.com" title="Twitter"
+											target="_blank"></a>
+									</li>
+									<li>
+										<a class="fab fa-linkedin-in" href="https://www.linkedin.com" title="LinkedIn"
+											target="_blank"></a>
+									</li>
+									<li>
+										<a class="fab fa-instagram" href="https://www.instagram.com" title="Instagram"
+											target="_blank"></a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- end header top -->
+		<!-- header bottom -->
+		<div class="header_bottom">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+						<!-- logo start -->
+						<div class="logo">
+							<a asp-controller="Main" asp-action="Home">
+								<img src="/images/logos/it_logo.png" alt="logo" />
+							</a>
+						</div>
+						<!-- logo end -->
+					</div>
+					<div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+						<!-- menu start -->
+						<div class="menu_side">
+							<div id="navbar_menu">
+								<ul class="first-ul">
+									@* ReSharper disable once Web.MappedPath *@
+									@if (Environment.IsDevelopment())
+									{
+										<li> <a href="/swagger/index.html" target="_blank">Swagger</a></li>
+									}
+									<li> <a asp-controller="Main" asp-action="Home">Home</a> </li>
+									<li> <a asp-controller="Dashboard" asp-action="Index">Dashboard</a> </li>
+									<li> <a>Products</a>
+										<partial name="CustomerPartials/_ProductsNavigationLinksPartial"/>
+									</li>
+									<li> <a asp-controller="Main" asp-action="About">About Us</a> </li>
+									<li> <a asp-controller="Main" asp-action="Privacy">Privacy Policy</a> </li>
+									<li> <a asp-controller="Main" asp-action="Contact">Contact</a> </li>
+								</ul>
+							</div>
+						</div>
+						<!-- menu end -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- header bottom end -->
+	</header>
+	<!-- end header -->
+
+
+
+
+	<main class="section">
+		<div class="container-fluid">
+			<div class="row">
+				<!-- inner page banner -->
+				@await RenderSectionAsync("banner", required: false)
+				<!-- end inner page banner -->
+				<!-- section -->
+				@RenderBody()
+				<!-- end section -->
+				<!-- section -->
+				<div class="section">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="full">
+									<div class="contact_us_section">
+										<div class="call_icon"> <img src="/images/it_service/phone_icon.png" alt="#" />
+										</div>
+										<div class="inner_cont">
+											<h2>REQUEST A FREE QUOTE</h2>
+											<p>Get answers and advice from people you want it from.</p>
+										</div>
+										<div class="button_Section_cont">
+											<a asp-controller="Main" asp-action="Contact"
+												class="btn dark_gray_bt">Contact us</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- end section -->
+				<!-- section -->
+				<div class="section padding_layout_1" style="padding: 50px 0;">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="full">
+									<ul class="brand_list">
+										<li><img src="/images/it_service/brand_icon1.png" alt="#" /></li>
+										<li><img src="/images/it_service/brand_icon2.png" alt="#" /></li>
+										<li><img src="/images/it_service/brand_icon3.png" alt="#" /></li>
+										<li><img src="/images/it_service/brand_icon4.png" alt="#" /></li>
+										<li><img src="/images/it_service/brand_icon5.png" alt="#" /></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- end section -->
+			</div>
+		</div>
+	</main>
+
+	<!-- footer -->
+	<footer class="footer_style_2" style="min-height: 0;">
+		<div class="container-fuild">
+			<div class="row">
+				<div class="map_section" style="width: 100%;">
+					<div id="map"></div>
+				</div>
+				<div class="cprt" style="position: static; padding-left: 0;">
+					<p>ItNext © Copyrights 2019 Design by html.design</p>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<a href="#" class="btn btn-primary p-3 back-to-top" id="back-to-top" style="border-radius: 45%;display: none;">
+		<i class="fa fa-angle-double-up"></i>
+	</a>
+
+	<!-- end footer -->
+	<!-- js section -->
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<!-- menu js -->
+	<script src="/js/menumaker.js"></script>
+	<!-- wow animation -->
+	<script src="/js/wow.js"></script>
+	<!-- custom js -->
+	<script src="/js/custom.js"></script>
+	
+<environment include="Development">
+	<script src="/libs/mapbox-gl2.9.2/dist/mapbox-gl.js"></script>
+</environment>
+<environment exclude="Development">
+	<script src="https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js" 
+			asp-fallback-src="/libs/mapbox-gl2.9.2/dist/mapbox-gl.js">
+	</script>
+</environment>
+
+<script>
+	mapboxgl.accessToken = '@Configuration["Mapbox:Token"]';
+	const companyLocation = [36.2434691684324, 33.49998731168769];
+	const map = new mapboxgl.Map({
+		container: 'map', // container ID
+		style: 'mapbox://styles/mapbox/streets-v11', // style URL
+		center: companyLocation, // starting position [lng, lat]
+		zoom: 17, // starting zoom
+		dragPan: false,
+		projection: 'globe' // display the map as a 3D globe
+	});
+	map.on('style.load', () => {
+		map.setFog({}); // Set the default atmosphere style
+
+		map.loadImage(
+			'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
+			(error, image) => {
+
+				map.addImage('custom-marker', image);
+
+				map.addSource('points',
+					{
+						'type': 'geojson',
+						'data': {
+							'type': 'FeatureCollection',
+							'features': [{
+								"type": "Feature",
+								"properties": {
+									"title": "IT-Next"
+								},
+								"geometry": {
+									"type": "Point",
+									"coordinates": companyLocation
+								}
+							}]
+						}
+					});
+
+				map.addLayer({
+					'id': 'points',
+					'type': 'symbol',
+					'source': 'points',
+					'layout': {
+						'icon-image': 'custom-marker',
+						// get the title name from the source's "title" property
+						'text-field': ['get', 'title'],
+						'text-font': [
+							'Open Sans Semibold',
+							'Arial Unicode MS Bold'
+						],
+						'text-offset': [0, 1.25],
+						'text-anchor': 'top'
+					}
+				});
+			});
+	});
+</script>
+
+	@await RenderSectionAsync("scripts", required: false)
+
+	<script>
+
+		function DeleteHostAndQueryString(url) {
+			let newUrl = url.includes("?") ? url.split("?")[0] : url;
+			const ignoredCharsCount = newUrl.indexOf(location.host) + location.host.length;
+			const wantedLength = newUrl.length - ignoredCharsCount;
+			newUrl = newUrl.substr(ignoredCharsCount, wantedLength);
+
+			if (newUrl.charAt(wantedLength - 1) === "/")
+				newUrl = newUrl.substr(0, (wantedLength - 1));
+
+			newUrl = newUrl.toLowerCase();
+			return newUrl;
+		}
+
+		function HighLightPageLinks(pageUrl) {
+			pageUrl = decodeURIComponent(pageUrl);
+
+			$(".first-ul a").each(function () {
+				var linkUrl = $(this).attr("href");
+				linkUrl = decodeURIComponent(linkUrl);
+				linkUrl = linkUrl.toLowerCase();
+
+				if (linkUrl === pageUrl || (pageUrl === "" && linkUrl === "/home")) {
+					$(this).addClass("active");
+					const parents = $(this).parents().filter(function () {
+						return $(this).hasClass("has-sub");
+					});
+					parents.each(function () {
+						$(this).find("a:eq(0)").addClass("active");
+					});
+
+					return false;
+				}
+				// ReSharper disable once NotAllPathsReturnValue
+			});
+		}
+
+		const url = DeleteHostAndQueryString(window.location.href);
+		HighLightPageLinks(url);
+
+		$(window).on('load', function () {
+			window.onscroll = function () {
+				if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20)
+				$(".back-to-top").show(200);
+				else $(".back-to-top").hide(200);
+			};
+
+			$(".back-to-top").on("click", function (e) {
+				e.preventDefault();
+				document.body.scrollTop = 0;
+				$(document.documentElement).animate({
+					scrollTop: 0
+				}, 2000);
+			});
+		});
+
+		if (document.cookie.indexOf("timeZone=") === -1)
+			cookieStore.set("timeZone", (new Date()).getTimezoneOffset());
+	</script>
+
+	<script id="myLastElement">
+		$(window).on('load', function () {
+			// delete hosting generated tags.
+			$("#myLastElement").nextAll().remove();
+		});
+	</script>
+</body>
+
+</html>

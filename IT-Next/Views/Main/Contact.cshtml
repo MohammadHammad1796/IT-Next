@@ -1,0 +1,172 @@
+@model SendContactMessageViewModel
+
+@{
+	ViewData["title"] = "Contact US";
+}
+
+@section metaTags
+{
+  <meta name="description" content="IT-Next - Contact US.">
+  <meta property="og:description" content="IT-Next - Contact US.">
+  <meta property="og:image" content="@($"{Context.Request.Scheme}://{Context.Request.Host}/images/logos/it_logo_square.png")">
+  <meta property="og:url" content="@($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}")" />
+  <meta property="og:title" content="IT-Next - Contact US">
+  <meta name="title" content="IT-Next - Contact US">
+  <meta property="og:type" content="website" />
+}
+
+@section styles
+{
+	<style>
+		form span.field-validation-error {
+			display: inline-block;
+		}
+
+		.progress-bar-striped {
+			background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent) !important;
+			background-size: 1rem 1rem !important;
+		}
+	</style>
+}
+
+@section banner
+{
+	<div id="inner_banner" class="section inner_banner_section">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="full">
+						<div class="title-holder">
+							<div class="title-holder-cell text-left">
+								<h1 class="page-title">Contact US</h1>
+								<ol class="breadcrumb">
+									<li><a asp-controller="Main" asp-action="Home">Home</a></li>
+									<li class="active">Contact US</li>
+								</ol>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+<div class="section padding_layout_1">
+	<div class="container">
+		<div class="row">
+			<div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-xs-12"></div>
+			<div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
+				<div class="row">
+					<div class="full">
+						<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 adress_cont margin_bottom_30">
+							<h4>Address One</h4>
+							<p>Damascus, Mazzeh, Western village, Ward Al-Sham side.</p>
+							<div class="information_bottom left-side margin_bottom_20_all">
+								<div class="icon_bottom"> <i class="fa fa-road" aria-hidden="true"></i> </div>
+								<div class="info_cont">
+									<h4>Western village, Ward Al-Sham side</h4>
+									<p>Damascus, Mazzeh</p>
+								</div>
+							</div>
+							<div class="information_bottom left-side margin_bottom_20_all">
+								<div class="icon_bottom"> <i class="fa fa-user" aria-hidden="true"></i> </div>
+								<div class="info_cont">
+									<h4><a href="tel:0011 234 56789">0011 234 56789</a></h4>
+									<p>Mon-Fri 8:30am-6:30pm</p>
+								</div>
+							</div>
+							<div class="information_bottom left-side">
+								<div class="icon_bottom"> <i class="fa fa-envelope" aria-hidden="true"></i> </div>
+								<div class="info_cont">
+									<h4><a href="mailto:itsolution1796@gmail.com">itsolution1796@gmail.com</a></h4>
+									<p>24/7 online support</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 adress_cont margin_bottom_30_all">
+							<h4>Address Two</h4>
+							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. sed do eiusmod tempor.</p>
+							<div class="information_bottom left-side margin_bottom_20_all">
+								<div class="icon_bottom"> <i class="fa fa-road" aria-hidden="true"></i> </div>
+								<div class="info_cont">
+									<h4>Lorem Ipsum is simply dummy text..</h4>
+									<p>Sydney Australia</p>
+								</div>
+							</div>
+							<div class="information_bottom left-side margin_bottom_20_all">
+								<div class="icon_bottom"> <i class="fa fa-user" aria-hidden="true"></i> </div>
+								<div class="info_cont">
+									<h4><a href="tel:0011 234 56789">0011 234 56789</a></h4>
+									<p>Mon-Fri 8:30am-6:30pm</p>
+								</div>
+							</div>
+							<div class="information_bottom left-side">
+								<div class="icon_bottom"> <i class="fa fa-envelope" aria-hidden="true"></i> </div>
+								<div class="info_cont">
+									<h4><a href="mailto:Example@gmail.com">Example@gmail.com</a></h4>
+									<p>24/7 online support</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 contant_form">
+							<h4>GET IN TOUCH</h4>
+							<p>Our goal is to provide the best customer service and to answer all of your questions in a timely manner.</p>
+							<div class="form_section">
+								<form class="form_contant" method="post" id="contactForm">
+									<fieldset>
+										<div class="row">
+											<div class="field col-lg-12 col-md-12 col-sm-12 col-xs-12">
+												<input class="field_custom" placeholder="Name" asp-for="CustomerName" />
+												<span asp-validation-for="CustomerName" class="mb-2"></span>
+											</div>
+											<div class="field col-lg-6 col-md-6 col-sm-12 col-xs-12">
+												<input class="field_custom" placeholder="Email" asp-for="Email" />
+												<span asp-validation-for="Email" class="mb-2"></span>
+											</div>
+											<div class="field col-lg-6 col-md-6 col-sm-12 col-xs-12">
+												<input class="field_custom" placeholder="Mobile" asp-for="MobileNumber" />
+												<span asp-validation-for="MobileNumber" class="mb-2"></span>
+											</div>
+											<div class="field col-lg-12 col-md-12 col-sm-12 col-xs-12">
+												<textarea class="field_custom" placeholder="Message" asp-for="Message" ></textarea>
+												<span asp-validation-for="Message" class="mb-2"></span>
+											</div>
+											<div class="center"><button type="submit" class="btn main_bt">SUBMIT NOW</button></div>
+										</div>
+									</fieldset>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModal" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Send message</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body wait">
+				<p>Plesae wait...</p>
+				<div class="progress" style="height: 15px;">
+					<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+				</div>
+			</div>
+			<div class="modal-body result"></div>
+		</div>
+	</div>
+</div>
+
+@section scripts
+{
+	<partial name="DashboardPartials/_ValidationScriptsPartial"/>
+	<script src="/js/contact.js" asp-append-version="true"></script>
+}

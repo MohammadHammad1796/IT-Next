@@ -7,4 +7,11 @@ public class Brand : EntityWithUniqueName
     [Required]
     [MaxLength(50)]
     public override string Name { get; set; }
+
+    public ICollection<Product> Products { get; set; }
+
+    public Brand()
+    {
+        Products = new List<Product>();
+    }
 }

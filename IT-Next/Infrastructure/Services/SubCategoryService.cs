@@ -1,4 +1,5 @@
-﻿using IT_Next.Core.Repositories;
+﻿using IT_Next.Core.Entities;
+using IT_Next.Core.Repositories;
 using IT_Next.Core.Services;
 
 namespace IT_Next.Infrastructure.Services;
@@ -7,7 +8,8 @@ public class SubCategoryService : ISubCategoryService
 {
     private readonly ISubCategoryRepository _subCategoryRepository;
 
-    public SubCategoryService(ISubCategoryRepository subCategoryRepository)
+    public SubCategoryService(ISubCategoryRepository subCategoryRepository, 
+    ICategoryRepository categoryRepository)
     {
         _subCategoryRepository = subCategoryRepository;
     }

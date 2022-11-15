@@ -2,6 +2,7 @@ using IT_Next.Core.Entities;
 using IT_Next.Core.Repositories;
 using IT_Next.Core.Services;
 using IT_Next.Custom.FilterAttributes;
+using IT_Next.Custom.Middlewares;
 using IT_Next.Infrastructure.Data;
 using IT_Next.Infrastructure.Repositories;
 using IT_Next.Infrastructure.Services;
@@ -21,7 +22,6 @@ public class Program
         ConfigureApplication(app);
 
         app.Run();
-
     }
 
     public static void ConfigureServices(IServiceCollection services, IConfiguration configuration,
@@ -67,6 +67,8 @@ public class Program
         services.AddScoped<IQueryCustomization<Product>, QueryCustomization<Product>>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IQueryCustomization<ContactMessage>, QueryCustomization<ContactMessage>>();
+        services.AddScoped<IContactMessageRepository, ContactMessageRepository>();
 
         services.AddScoped<IFileRepository, FileRepository>();
         services.AddScoped<IPhotoRepository, PhotoRepository>();
@@ -89,13 +91,14 @@ public class Program
         }
 
         application.UseStaticFiles();
+        application.UseMiddleware<NotFoundPageMiddleware>();
         application.UseRouting();
         application.UseEndpoints(endpoints =>
         {
             endpoints.MapControllerRoute(
                 name: "default",
                 pattern: "{controller}/{action}/{id?}",
-                defaults: new { controller = "Home", action = "Index" });
+                defaults: new { controller = "Main", action = "Home" });
         });
     }
 }
