@@ -9,7 +9,7 @@ public class StorageService : IStorageService
 
     public StorageService(IWebHostEnvironment environment, IConfiguration configuration)
     {
-        _rootPath = environment.WebRootPath;
+        _rootPath = environment.ContentRootPath;
         _configuration = configuration;
     }
 
