@@ -7,7 +7,7 @@ public class PhotoRepository : FileRepository, IPhotoRepository
 {
     private const string ImagesFolderName = "images";
 
-    public PhotoRepository(IHostEnvironment host) : base(host)
+    public PhotoRepository(IWebHostEnvironment host) : base(host)
     {
     }
 

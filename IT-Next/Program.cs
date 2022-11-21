@@ -7,6 +7,7 @@ using IT_Next.Infrastructure.Data;
 using IT_Next.Infrastructure.Repositories;
 using IT_Next.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace IT_Next;
 
@@ -54,6 +55,12 @@ public class Program
             services.AddSwaggerGen();
         }
 
+        services.AddHttpsRedirection(options =>
+        {
+            options.RedirectStatusCode = (int) HttpStatusCode.PermanentRedirect;
+            options.HttpsPort = int.Parse(configuration["httpsPort"]);
+        });
+        
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IQueryCustomization<Category>, QueryCustomization<Category>>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -72,6 +79,9 @@ public class Program
 
         services.AddScoped<IFileRepository, FileRepository>();
         services.AddScoped<IPhotoRepository, PhotoRepository>();
+
+        services.AddScoped<ICertificateService, CertificateService>();
+        services.AddScoped<IStorageService, StorageService>();
     }
 
     public static void ConfigureApplication(WebApplication application)
@@ -89,7 +99,13 @@ public class Program
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
             });
         }
+        else
+        {
+            application.UseHsts();
+        }
 
+        application.UseMiddleware<DisableHttpOnApiMiddleware>();
+        application.UseHttpsRedirection();
         application.UseStaticFiles();
         application.UseMiddleware<NotFoundPageMiddleware>();
         application.UseRouting();

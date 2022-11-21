@@ -9,9 +9,9 @@ public class FileRepository : IFileRepository
 {
     private readonly string _rootPath;
 
-    public FileRepository(IHostEnvironment host)
+    public FileRepository(IWebHostEnvironment host)
     {
-        _rootPath = host.ContentRootPath + "\\wwwroot";
+        _rootPath = host.WebRootPath;
     }
 
     public virtual async Task<string?> SaveAsync(IFormFile file, string folderPath)

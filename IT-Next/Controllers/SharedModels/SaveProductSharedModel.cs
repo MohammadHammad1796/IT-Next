@@ -31,5 +31,7 @@ public class SaveProductSharedModel
 
     [FileTypeImage]
     [RequiredIfIntegerIdZero]
+    [SquareImage]
+    [MinimumImageWidth(200)]
     public IFormFile? Image { get; set; }
 }

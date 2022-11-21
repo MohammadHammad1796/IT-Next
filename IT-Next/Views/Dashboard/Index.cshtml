@@ -1,3 +1,14 @@
 ﻿@{
 	ViewData["title"] = "Main";
 }
+
+<div class="container-fluid">
+	<div class="row" id="hostingInfo">
+	</div>
+</div>
+
+@section scripts
+{
+	<script src="/js/dateTimeHelpers.js" asp-append-version="true"></script>
+	<script src="/js/dashboard/manageMain.js" asp-append-version="true"></script>
+}
