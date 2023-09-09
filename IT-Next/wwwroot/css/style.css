@@ -3598,17 +3598,6 @@ footer ul.social_icons {
 	border: solid #eee 5px;
 }
 
-.map_section {
-	float: right;
-	width: 35%;
-}
-
-#map {
-	height: 100%;
-	min-height: 540px;
-	z-index: 1;
-}
-
 .inner_banner_section {
 	background: url('../images/it_service/inner_page_banner.jpg');
 	min-height: 245px;
@@ -4676,10 +4665,6 @@ footer ul.social_icons {
 .cleaning .about_blog {
 	background: #fff;
 	box-shadow: 0 10px 25px -25px #000;
-}
-
-.cleaning .map_section {
-	width: 100%;
 }
 
 .cleaning .cprt {

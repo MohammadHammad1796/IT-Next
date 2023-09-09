@@ -28,7 +28,6 @@
   <ItemGroup>
     <Folder Include="Controllers\SharedModels\" />
     <Folder Include="Custom\FilterAttributes\" />
-    <Folder Include="wwwroot\libs\mapbox-gl2.9.2\" />
   </ItemGroup>
 
 </Project>
