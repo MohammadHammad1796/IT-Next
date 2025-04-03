@@ -92,7 +92,7 @@ public class Program
 
             application.UseSwagger(options =>
             {
-                options.SerializeAsV2 = true;
+                options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
             });
             application.UseSwaggerUI(options =>
             {
@@ -109,12 +109,6 @@ public class Program
         application.UseStaticFiles();
         application.UseMiddleware<NotFoundPageMiddleware>();
         application.UseRouting();
-        application.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllerRoute(
-                name: "default",
-                pattern: "{controller}/{action}/{id?}",
-                defaults: new { controller = "Main", action = "Home" });
-        });
+        application.MapControllerRoute("Default", "{controller}/{action}/{id?}", new { controller = "Main", action = "Home" });
     }
 }

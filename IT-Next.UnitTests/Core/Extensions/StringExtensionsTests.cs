@@ -16,6 +16,6 @@ internal class StringExtensionsTests
     {
         var result = value.TrimExtraSpaces();
 
-        Assert.AreEqual(expectedResult, result);
+        Assert.That(expectedResult, Is.EqualTo(result));
     }
 }

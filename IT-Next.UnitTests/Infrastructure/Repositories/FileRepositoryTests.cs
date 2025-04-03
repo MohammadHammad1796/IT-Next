@@ -1,9 +1,9 @@
 ﻿using IT_Next.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
 using Moq;
 using NUnit.Framework;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace IT_Next.UnitTests.Infrastructure.Repositories;
@@ -11,6 +11,7 @@ namespace IT_Next.UnitTests.Infrastructure.Repositories;
 [TestFixture]
 internal class FileRepositoryTests
 {
+    private const string rootPath = "D:\\wwwroot";
     private Mock<IWebHostEnvironment> _environment;
     private Mock<IFormFile> _file;
     private FileRepository _repository;
@@ -19,7 +20,7 @@ internal class FileRepositoryTests
     public void SetUp()
     {
         _environment = new Mock<IWebHostEnvironment>();
-        _environment.Setup(e => e.WebRootPath).Returns("D:\\wwwroot");
+        _environment.Setup(e => e.WebRootPath).Returns(rootPath);
         _file = new Mock<IFormFile>();
         _file.Setup(f => f.FileName).Returns("name.pdf");
         _repository = new FileRepository(_environment.Object);
@@ -45,7 +46,9 @@ internal class FileRepositoryTests
     [Test]
     public void Delete_WhenFileDeletedSuccessfully_ReturnsTrue()
     {
-        var result = _repository.Delete("Documents/8bb86e08-f3a1-4f09-9168-a92d83e4595f.pdf");
+        const string FileNameWithPath = "Documents/8bb86e08-f3a1-4f09-9168-a92d83e4595f.pdf"; 
+        File.Create(Path.Combine(rootPath, FileNameWithPath)).Close();        
+        var result = _repository.Delete(FileNameWithPath);
 
         Assert.That(result, Is.True);
     }

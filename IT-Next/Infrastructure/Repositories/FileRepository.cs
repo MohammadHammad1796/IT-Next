@@ -20,7 +20,7 @@ public class FileRepository : IFileRepository
         try
         {
             var fullPath = Combine(_rootPath, folderPath);
-            if (!Exists(fullPath))
+            if (!Directory.Exists(fullPath))
                 CreateDirectory(fullPath);
 
             var fileName = NewGuid() + GetExtension(file.FileName);
