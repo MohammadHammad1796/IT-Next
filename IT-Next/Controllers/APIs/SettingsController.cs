@@ -18,6 +18,7 @@ public class SettingsController : Controller
         _dbManager = dbManager;
     }
 
+    [HttpGet]
     public IActionResult Get()
     {
         return Ok(_settingsManager.Get());
