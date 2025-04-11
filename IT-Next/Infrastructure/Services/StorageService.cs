@@ -1,16 +1,18 @@
+using IT_Next.Core.Helpers;
 using IT_Next.Core.Services;
+using Microsoft.Extensions.Options;
 
 namespace IT_Next.Infrastructure.Services;
 
 public class StorageService : IStorageService
 {
     private readonly string _rootPath;
-    private readonly IConfiguration _configuration;
+    private readonly AppSetting _appSetting;
 
-    public StorageService(IWebHostEnvironment environment, IConfiguration configuration)
+    public StorageService(IWebHostEnvironment environment, IOptions<AppSetting> options)
     {
         _rootPath = environment.ContentRootPath;
-        _configuration = configuration;
+        _appSetting = options.Value;
     }
 
     public float GetUsedStorageInMB()
@@ -26,7 +28,7 @@ public class StorageService : IStorageService
 
     public float GetAllStorageInMB()
     {
-        var allSpace = float.Parse(_configuration["Hosting:Space"]);
+        var allSpace = _appSetting.HostingSpaceInMb;
         return allSpace;
     }
 }

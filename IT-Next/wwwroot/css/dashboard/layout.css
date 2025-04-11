@@ -132,3 +132,12 @@ header {
   bottom: 30px;
   z-index: 11;
 }
+
+.toast-container {
+    top: 55px !important;
+}
+
+section {
+    margin-bottom: 15px;
+    padding: 1%;
+}

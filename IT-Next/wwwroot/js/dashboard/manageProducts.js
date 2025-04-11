@@ -667,17 +667,3 @@ $(window).on("load", function () {
 			e.preventDefault();
 	});
 });
-
-$(function () {
-	jQuery.validator.addMethod("requiredif", function (value) {
-		var isValid = true;
-		if (parseInt($("#Id").val()) === 0 && (value === null || value === undefined || value === ""))
-			isValid = false;
-		return isValid;
-	});
-
-	jQuery.validator.unobtrusive.adapters.add("requiredif", [], function (options) {
-		options.rules["requiredif"] = {};
-		options.messages["requiredif"] = "The image required.";
-	});
-}(jQuery));

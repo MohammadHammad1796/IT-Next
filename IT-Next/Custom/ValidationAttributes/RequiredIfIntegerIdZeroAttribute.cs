@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace IT_Next.Custom.ValidationAttributes;
 
-public class RequiredIfIntegerIdZeroAttribute : ValidationAttribute
+public class RequiredIfIntegerIdZeroAttribute : ValidationAttribute, IClientModelValidator
 {
-    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         var idProperty = validationContext.ObjectType.GetProperty("Id")?
             .GetValue(validationContext.ObjectInstance);
@@ -27,5 +28,20 @@ public class RequiredIfIntegerIdZeroAttribute : ValidationAttribute
         ErrorMessage = ErrorMessage == null ?
             $"The {displayName} field is required." :
             string.Format(ErrorMessage, displayName);
+    }
+
+    public void AddValidation(ClientModelValidationContext context)
+    {
+        MergeAttribute(context.Attributes, "data-val", "true");
+        MergeAttribute(context.Attributes, "data-val-requiredifintegeridzero", FormatErrorMessage(context.ModelMetadata.GetDisplayName()) ?? $"The field is required.");
+    }
+
+    private static bool MergeAttribute(IDictionary<string, string> attributes, string key, string value)
+    {
+        if (attributes.ContainsKey(key))
+            return false;
+
+        attributes.Add(key, value);
+        return true;
     }
 }

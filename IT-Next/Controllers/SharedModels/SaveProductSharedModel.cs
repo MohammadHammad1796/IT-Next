@@ -30,7 +30,7 @@ public class SaveProductSharedModel
     public int BrandId { get; set; }
 
     [FileTypeImage]
-    [RequiredIfIntegerIdZero]
+    [RequiredIfIntegerIdZero(ErrorMessage = "The {0} is required.")]
     [SquareImage]
     [MinimumImageWidth(200)]
     public IFormFile? Image { get; set; }

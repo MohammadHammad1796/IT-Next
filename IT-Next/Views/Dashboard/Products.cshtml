@@ -5,6 +5,7 @@
 
 @section styles{
 	<link rel="stylesheet" href="/css/dashboard/dataTable.css" asp-append-version="true" />
+	<link rel="stylesheet" href="/css/dashboard/form.css" asp-append-version="true" />
 <link rel="stylesheet" href="/css/dashboard/manageProducts.css" asp-append-version="true" />
 }
 <section>
@@ -160,7 +161,7 @@
 				<div class="modal-body col-md-6 col-12">
 					<div class="mb-3">
 						<label asp-for="Image" class="col-form-label"></label>
-						<input data-val="true" data-val-requiredIf="The image required." type="file" accept="image/png, image/gif, image/jpeg, image/jpg" asp-for="Image" class="form-control" />
+						<input data-val="true" type="file" accept="image/png, image/gif, image/jpeg, image/jpg" asp-for="Image" class="form-control" />
 						<span asp-validation-for="Image"></span>
 					</div>
 				</div>
@@ -212,5 +213,6 @@
 		        asp-fallback-src="/libs/corejs-typeahead1.3.1/typeahead.bundle.min.js"></script>
 	</environment>
 	<script src="/js/dateTimeHelpers.js" asp-append-version="true"></script>
+	<script src="/js/dashboard/form.js" asp-append-version="true"></script>
 	<script src="/js/dashboard/manageProducts.js" asp-append-version="true"></script>
 }

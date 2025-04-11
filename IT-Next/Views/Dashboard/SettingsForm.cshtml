@@ -1,0 +1,35 @@
+﻿@using IT_Next.Core.Helpers
+@model AppSetting
+@{
+	ViewData["title"] = "App Settings";
+}
+
+@section styles {
+	<link rel="stylesheet" href="/css/dashboard/form.css" asp-append-version="true" />
+}
+
+<form id="settings">
+	<div class="mb-3">
+		<label asp-for="ConnectionString" class="col-form-label"></label>
+		<input autocomplete="off" asp-for="ConnectionString" class="form-control" />
+		<span asp-validation-for="ConnectionString"></span>
+	</div>
+	<div class="mb-3">
+		<label asp-for="HttpsPort" class="col-form-label"></label>
+		<input autocomplete="off" asp-for="HttpsPort" class="form-control" />
+		<span asp-validation-for="HttpsPort"></span>
+	</div>
+	<div class="mb-3">
+		<label asp-for="HostingSpaceInMb" class="col-form-label"></label>
+		<input autocomplete="off" asp-for="HostingSpaceInMb" class="form-control" />
+		<span asp-validation-for="HostingSpaceInMb"></span>
+	</div>
+
+	<button type="submit" class="btn btn-primary" id="saveBtn" disabled="disabled">Save</button>
+</form>
+
+@section scripts
+{
+	<script src="/js/dashboard/form.js" asp-append-version="true"></script>
+	<script src="/js/dashboard/settings.js" asp-append-version="true"></script>
+}

@@ -187,20 +187,6 @@ function ConfigureEdit(id) {
   });
 }
 
-function getFormDataAsJson(form) {
-  const unIndexedArray = form.serializeArray();
-  const indexedArray = {};
-
-  $.map(unIndexedArray, function (n) {
-	if (typeof n["value"] === "string")
-	  n["value"] = n["value"].trim();
-	indexedArray[n["name"]] = n["value"];
-  });
-
-  const result = JSON.stringify(indexedArray);
-  return result;
-}
-
 function DeleteItem(id) {
   $.ajax({
 	async: false,

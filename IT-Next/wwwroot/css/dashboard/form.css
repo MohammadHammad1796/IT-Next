@@ -1,13 +1,4 @@
-﻿.toast-container {
-    top: 55px !important;
-}
-
-section {
-    margin-bottom: 15px;
-    padding: 1%;
-}
-
-.field-validation-error {
+﻿.field-validation-error {
     color: #F00;
 }
 
@@ -28,10 +19,10 @@ section {
 }
 
 /* ReSharper disable once Html.AttributeNotResolved */
-    .twitter-typeahead div[role="option"]:not(:last-child) {
-        border-bottom: solid 1px #EEF;
-        margin-bottom: 0.5rem;
-    }
+.twitter-typeahead div[role="option"]:not(:last-child) {
+    border-bottom: solid 1px #EEF;
+    margin-bottom: 0.5rem;
+}
 
 /* ReSharper disable once Html.AttributeNotResolved */
 .twitter-typeahead div[role="option"]:hover {

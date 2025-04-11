@@ -1,4 +1,6 @@
 using IT_Next.Core.Entities;
+using IT_Next.Core.Extensions;
+using IT_Next.Core.Helpers;
 using IT_Next.Core.Repositories;
 using IT_Next.Core.Services;
 using IT_Next.Custom.FilterAttributes;
@@ -17,7 +19,13 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
+        ConfigureBaseServices(builder.Services, builder.Environment);
+        var settingsResult = ConfigureSettings(builder);
+        if (settingsResult.IsSucceeded)
+        {
+            var settings = ((ResultWithResponse<AppSetting>)settingsResult).Response;
+            ConfigureServices(builder.Services, settings);
+        }
 
         var app = builder.Build();
         ConfigureApplication(app);
@@ -25,17 +33,46 @@ public class Program
         app.Run();
     }
 
-    public static void ConfigureServices(IServiceCollection services, IConfiguration configuration,
+    private static string GetSettingFilePath(string environmentName) => 
+        Path.Combine(AppContext.BaseDirectory, $"appSettings.{environmentName}.json");
+
+    public static Result ConfigureSettings(WebApplicationBuilder builder)
+    {
+        IServiceCollection services = builder.Services;
+        IConfiguration configuration = builder.Configuration;
+        builder.Configuration.Sources.Clear();
+
+        var settingsManager = services.BuildServiceProvider().GetRequiredService<ISettingsManager>();
+        AppSetting settings;
+        try
+        {
+            settings = settingsManager.Get();
+            services.Configure<AppSetting>(configuration);
+        }
+        catch (FileNotFoundException exception)
+        {
+            Console.WriteLine(exception);
+            settings = new AppSetting();
+            settingsManager.Save(settings);
+        }
+
+        var validationResult = settings!.Validate();
+        if (!validationResult.IsSucceeded)
+            return new Result();
+
+        builder.Configuration.AddJsonFile(GetSettingFilePath(builder.Environment.EnvironmentName));
+        return new ResultWithResponse<AppSetting>(true, settings!);
+    }
+
+    public static void ConfigureBaseServices(IServiceCollection services,
         IWebHostEnvironment environment)
     {
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("Default")));
-
-        services.AddControllersWithViews(options =>
-        {
-            options.Filters.Add<ValidateModelFilter>();
-            options.Filters.Add<TrimStringsFilter>();
-        })
+        services
+            .AddControllersWithViews(options =>
+            {
+                options.Filters.Add<ValidateModelFilter>();
+                options.Filters.Add<TrimStringsFilter>();
+            })
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
@@ -45,7 +82,10 @@ public class Program
                 options.SuppressModelStateInvalidFilter = true;
             });
 
-        services.AddAutoMapper(typeof(Program));
+        services.AddSingleton<ISettingsManager, SettingsManager>(_ 
+            => new SettingsManager(GetSettingFilePath(environment.EnvironmentName)));
+
+        services.AddScoped<IDbManager, DbManager>();
 
         if (environment.IsDevelopment())
         {
@@ -54,13 +94,21 @@ public class Program
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
         }
+    }
 
+    public static void ConfigureServices(IServiceCollection services, AppSetting settings)
+    {
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(settings.ConnectionString));
+
+        services.AddAutoMapper(typeof(Program));
+        
         services.AddHttpsRedirection(options =>
         {
             options.RedirectStatusCode = (int) HttpStatusCode.PermanentRedirect;
-            options.HttpsPort = int.Parse(configuration["httpsPort"]);
+            options.HttpsPort = settings.HttpsPort;
         });
-        
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IQueryCustomization<Category>, QueryCustomization<Category>>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();

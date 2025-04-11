@@ -23,4 +23,7 @@ public class DashboardController : DashboardUIController
 
     [Route("contactMessages")]
     public IActionResult ContactMessages() => View();
+
+    [Route("Settings")]
+    public IActionResult Settings() => View("SettingsForm");
 }

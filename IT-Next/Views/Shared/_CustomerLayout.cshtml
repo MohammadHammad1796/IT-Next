@@ -1,5 +1,4 @@
 ﻿@inject IWebHostEnvironment Environment;
-@inject IConfiguration Configuration;
 
 <!DOCTYPE html>
 <html lang="en">
@@ -21,9 +20,6 @@
 	<!-- mobile metas -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
-	<!-- site metas -->
-	<meta name="google-site-verification" content="J6y-QWq9JEPj76p2qDkTCbnu7SZ59srUAWd-gx5oSd8" />
-	<meta property="fb:app_id" content='@Configuration["Facebook:AppId"]'>
 
 	@await RenderSectionAsync("metaTags", required: false)
 	<!-- site icons -->
