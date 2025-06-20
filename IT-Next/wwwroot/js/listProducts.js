@@ -1,4 +1,4 @@
-const apiUrl = "/api/subCategories/";
+const apiUrl = apiUrls.subCategories;
 let categoryName = $(".breadcrumb li:eq(1)").text().trim(),
   subCategoryName = $(".breadcrumb li:eq(2)").text().trim();
 var query = {
@@ -111,10 +111,10 @@ function GetData(url, queryObject) {
 function RenderProducts(products) {
   $("#products").empty();
   for (let product of products) {
-    const productLink = `/products/${categoryName}/${subCategoryName}/${product.name}`;
+    const productLink = `${baseAppUrl}products/${categoryName}/${subCategoryName}/${product.name}`;
     let item = `<div class="col-md-4 col-sm-6 col-xs-12 margin_bottom_30_all">
                         <div class="product_list" onclick="location.href='${productLink}';" style="cursor:pointer;">
-                            <div class="product_img"> <img class="img-responsive" src="${product.imagePath}"
+                            <div class="product_img"> <img class="img-responsive" src="${baseAppUrl}${product.imagePath}"
                                 alt="${product.brand} ${product.name}">
                             </div>
                             <div class="product_detail_btm">
@@ -267,7 +267,7 @@ function RenderRelatedSubCategories() {
     for (let subCategory of relatedSubCategories) {
       newHtml += `
                     <li>
-                        <a href="/products/${categoryName}/${subCategory}">${subCategory}</a>
+                        <a href="${baseAppUrl}/products/${categoryName}/${subCategory}">${subCategory}</a>
                     </li>
             `;
     }

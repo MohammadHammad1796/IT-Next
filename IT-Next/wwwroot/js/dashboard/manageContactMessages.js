@@ -1,4 +1,4 @@
-﻿const apiUrl = "/api/contact/";
+﻿const apiUrl = apiUrls.contactMessages;
 const itemsTable = $("#items");
 const itemForm = $("#manageItems")[0];
 var counter = 1;

@@ -1,4 +1,4 @@
-﻿const apiUrl = "/api/brands/";
+﻿const apiUrl = apiUrls.brands;
 const itemsTable = $("#items");
 const itemForm = $("#manageItems")[0];
 var counter = 1;

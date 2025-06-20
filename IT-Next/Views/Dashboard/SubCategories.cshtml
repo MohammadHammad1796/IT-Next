@@ -4,8 +4,8 @@
 }
 
 @section styles{
-	<link rel="stylesheet" href="/css/dashboard/dataTable.css" asp-append-version="true" />
-	<link rel="stylesheet" href="/css/dashboard/form.css" asp-append-version="true" />
+	<link rel="stylesheet" href="css/dashboard/dataTable.css" asp-append-version="true" />
+	<link rel="stylesheet" href="css/dashboard/form.css" asp-append-version="true" />
 }
 <section>
 	<button class="btn btn-primary" id="new" data-bs-toggle="modal" data-bs-target="#manageModal">
@@ -136,12 +136,12 @@
 @section scripts
 {
 	<environment include="Development">
-		<script src="/libs/corejs-typeahead1.3.1/typeahead.bundle.min.js"></script>
+		<script src="libs/corejs-typeahead1.3.1/typeahead.bundle.min.js"></script>
 	</environment>
 	<environment exclude="Development">
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.3.1/typeahead.bundle.min.js" 
-		        asp-fallback-src="/libs/corejs-typeahead1.3.1/typeahead.bundle.min.js"></script>
+		        asp-fallback-src="libs/corejs-typeahead1.3.1/typeahead.bundle.min.js"></script>
 	</environment>
-	<script src="/js/dashboard/form.js" asp-append-version="true"></script>
-	<script src="/js/dashboard/manageSubCategories.js" asp-append-version="true"></script>
+	<script src="js/dashboard/form.js" asp-append-version="true"></script>
+	<script src="js/dashboard/manageSubCategories.js" asp-append-version="true"></script>
 }

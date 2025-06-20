@@ -1,4 +1,4 @@
-﻿const apiUrl = "/api/contact";
+﻿const apiUrl = apiUrls.contactMessages;
 
 function getFormDataAsJson(form) {
     const unIndexedArray = form.serializeArray();

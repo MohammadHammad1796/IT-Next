@@ -1,4 +1,4 @@
-﻿const apiUrl = "/api/products/";
+﻿const apiUrl = apiUrls.products;
 const itemsTable = $("#items");
 const itemForm = $("#manageItems")[0];
 var counter = 1;
@@ -78,10 +78,10 @@ function AddRow(table, product, ignoreTimeZone, isOdd) {
 						<td head='Discount'>${product.discount}</td>
 						<td head='Quantity'>${product.quantity}</td>
 						<td head='Last Update' class="notsearchable">${FormatDateTime(GetDateTimeObjectAsClientZone(product.lastUpdate, ignoreTimeZone), "dd-MM-yyyy hh:mm a")}</td>
-						<td head='Image' class="imageColumn"><img src="${product.imagePath}" style="width:100%;"/></td>
+						<td head='Image' class="imageColumn"><img src="${baseAppUrl}${product.imagePath}" style="width:100%;"/></td>
 						<td head='Description'>${product.description}</td>
 						<td head='Actions'>
-						<a href="/products/${product.categoryName}/${product.subCategoryName}/${product.name}" target="_blank" data-id="1"><i class="fas fa-eye me-3 mb-3"></i></a>
+						<a href="${baseAppUrl}products/${product.categoryName}/${product.subCategoryName}/${product.name}" target="_blank" data-id="1"><i class="fas fa-eye me-3 mb-3"></i></a>
 						<a href="#" class="edit-btn" data-id="${product.id}"><i class="fas fa-edit me-3 mb-3"></i></a>
 						<a href="#" class="remove-btn" data-id="${product.id}"><i class="fas fa-trash"></i></a>
 						</td>
@@ -607,7 +607,7 @@ $(window).on("load", function () {
 		datumTokenizer: window.Bloodhound.tokenizers.obj.whitespace("searchQuery"),
 		queryTokenizer: window.Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: "/api/subCategories/false?pageNumber=1&pageSize=20&sortBy=name&includeCategory=false&searchByCategory=false&searchQuery=%searchQuery",
+			url: apiUrls.subCategories + "false?pageNumber=1&pageSize=20&sortBy=name&includeCategory=false&searchByCategory=false&searchQuery=%searchQuery",
 			wildcard: "%searchQuery"
 		}
 	});
@@ -639,7 +639,7 @@ $(window).on("load", function () {
 		datumTokenizer: window.Bloodhound.tokenizers.obj.whitespace("searchQuery"),
 		queryTokenizer: window.Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: "/api/brands/false?pageNumber=1&pageSize=20&sortBy=name&searchQuery=%searchQuery",
+			url: apiUrls.brands + "false?pageNumber=1&pageSize=20&sortBy=name&searchQuery=%searchQuery",
 			wildcard: "%searchQuery"
 		}
 	});

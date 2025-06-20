@@ -144,7 +144,7 @@ public class Program
             });
             application.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                options.SwaggerEndpoint("v1/swagger.json", "v1");
             });
         }
         else

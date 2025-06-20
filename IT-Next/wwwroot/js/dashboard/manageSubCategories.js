@@ -1,4 +1,4 @@
-﻿const apiUrl = "/api/subCategories/";
+﻿const apiUrl = apiUrls.subCategories;
 const itemsTable = $("#items");
 const itemForm = $("#manageItems")[0];
 var counter = 1;
@@ -500,7 +500,7 @@ $(window).on("load", function () {
 		datumTokenizer: window.Bloodhound.tokenizers.obj.whitespace("searchQuery"),
 		queryTokenizer: window.Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: "/api/categories/false?pageNumber=1&pageSize=20&sortBy=name&searchQuery=%searchQuery",
+			url: apiUrls.categories + "false?pageNumber=1&pageSize=20&sortBy=name&searchQuery=%searchQuery",
 			wildcard: "%searchQuery"
 		}
 	});

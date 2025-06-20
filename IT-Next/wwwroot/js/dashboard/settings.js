@@ -1,4 +1,4 @@
-﻿const apiUrl = "/api/settings/";
+﻿const apiUrl = apiUrls.settings;
 const itemForm = $("#settings")[0];
 var $ = window.$;
 

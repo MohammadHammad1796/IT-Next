@@ -1,4 +1,4 @@
-const hostingApiUrl = "/api/hosting/";
+const hostingApiUrl = apiUrls.hosting;
 var $ = window.$;
 
 function GetData(url) {

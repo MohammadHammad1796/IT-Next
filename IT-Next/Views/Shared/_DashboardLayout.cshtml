@@ -6,33 +6,34 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Dashboard - @ViewData["Title"]</title>
-	<link rel="icon" href="/images/fevicon/fevicon.png" type="image/gif" />
+	<base href="@(Context.Request.PathBase)/" />
+	<link rel="icon" href="images/fevicon/fevicon.png" type="image/gif" />
 	
 	<environment include="Development">
-		<link rel="stylesheet" href="/libs/bootstrap5.2.0/css/bootstrap.min.css" />
-		<link rel="stylesheet" href="/libs/fontawesome5.10.0/css/all.min.css" />
+		<link rel="stylesheet" href="libs/bootstrap5.2.0/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="libs/fontawesome5.10.0/css/all.min.css" />
 	</environment>
 	<environment exclude="Development">
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" 
-		      asp-fallback-href="/libs/bootstrap5.2.0/css/bootstrap.min.css" rel="stylesheet"
+		      asp-fallback-href="libs/bootstrap5.2.0/css/bootstrap.min.css" rel="stylesheet"
 		      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" 
 		      crossorigin="anonymous">
 		<link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" 
-		      asp-fallback-href="/libs/fontawesome5.10.0/css/all.min.css"
+		      asp-fallback-href="libs/fontawesome5.10.0/css/all.min.css"
 		      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" 
 		      crossorigin="anonymous">
 	</environment>
-	<link rel="stylesheet" href="/css/dashboard/layout.css" asp-append-version="true"/>
+	<link rel="stylesheet" href="css/dashboard/layout.css" asp-append-version="true"/>
 	@await RenderSectionAsync("styles", required: false)
 </head>
 
 <body>
 
-	<div class="bg_load"> <img class="loader_animation" src="/images/loaders/loader_1.png" alt="#"> </div>
+	<div class="bg_load"> <img class="loader_animation" src="images/loaders/loader_1.png" alt="#"> </div>
 
 	<header class="navbar sticky-top flex-md-nowrap p-0 shadow">
 		<a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" asp-controller="Main" asp-action="Home">
-			<img src="/images/logos/it_logo.png" alt="logo" style="height: 40px;">
+			<img src="images/logos/it_logo.png" alt="logo" style="height: 40px;">
 		</a>
 		<button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
 			data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
@@ -61,7 +62,7 @@
 				<div class="toast-container position-fixed end-0 p-3" style="top: 60px !important;">
 					<div class="toast fade hide" role="alert" aria-live="assertive" aria-atomic="true">
 						<div class="toast-header">
-							<img src="/images/logos/it_logo.png" style="width: 40px;" class="rounded me-2"
+							<img src="images/logos/it_logo.png" style="width: 40px;" class="rounded me-2"
 								alt="IT-Next">
 							<small class="text-muted" id="notificationTime"></small>
 							<button type="button" id="toastBtn" class="btn-close" data-bs-dismiss="toast"
@@ -78,19 +79,20 @@
 	</div>
 
 <environment include="Development">
-	<script src="/libs/jquery3.5.1/dist/jquery.min.js"></script>
-	<script src="/libs/bootstrap5.2.0/js/bootstrap.bundle.min.js"></script>
+	<script src="libs/jquery3.5.1/dist/jquery.min.js"></script>
+	<script src="libs/bootstrap5.2.0/js/bootstrap.bundle.min.js"></script>
 </environment>
 <environment exclude="Development">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" 
-	        asp-fallback-src="/libs/jquery3.5.1/dist/jquery.min.js"></script>
+	        asp-fallback-src="libs/jquery3.5.1/dist/jquery.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
-	        asp-fallback-src="/libs/bootstrap5.2.0/js/bootstrap.bundle.min.js"
+	        asp-fallback-src="libs/bootstrap5.2.0/js/bootstrap.bundle.min.js"
 	        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
 	        crossorigin="anonymous"></script>
 </environment>
 <partial name="DashboardPartials/_ValidationScriptsPartial" />
-	<script src="/js/dashboard/layout.js" asp-append-version="true"></script>
+	<script src="js/dashboard/layout.js" asp-append-version="true"></script>
+	<script src="js/shared.js" asp-append-version="true"></script>
 	@await RenderSectionAsync("scripts", required: false)
 	<script id="myLastElement">
 		$(window).on('load', function () {

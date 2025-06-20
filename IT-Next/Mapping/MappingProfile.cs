@@ -36,10 +36,10 @@ public class MappingProfile : Profile
             .ForMember(pr => pr.CategoryName, opt => opt.MapFrom(p => p.SubCategory.Category.Name))
             .ForMember(pr => pr.BrandId, opt => opt.MapFrom(p => p.Brand.Id))
             .ForMember(pr => pr.BrandName, opt => opt.MapFrom(p => p.Brand.Name))
-            .ForMember(pr => pr.ImagePath, opt => opt.MapFrom(p => string.Concat("/", p.ImagePath)));
+            .ForMember(pr => pr.ImagePath, opt => opt.MapFrom(p => p.ImagePath));
         CreateMap<Product, ProductInSubCategoryProductsListResource>()
             .ForMember(res => res.Brand, opt => opt.MapFrom(p => p.Brand.Name))
-            .ForMember(res => res.ImagePath, opt => opt.MapFrom(p => string.Concat("/", p.ImagePath)))
+            .ForMember(res => res.ImagePath, opt => opt.MapFrom(p => p.ImagePath))
             .ForMember(res => res.OldPrice, opt => opt.MapFrom(p => p.Price))
             .ForMember(res => res.NewPrice, opt => opt.MapFrom(p => p.Price * (1 - p.Discount)));
 
@@ -54,7 +54,7 @@ public class MappingProfile : Profile
                     {
                         Name = product.Name,
                         Brand = product.Brand.Name,
-                        ImagePath = string.Concat("/", product.ImagePath),
+                        ImagePath = product.ImagePath,
                         OldPrice = product.Price,
                         CategoryName = product.SubCategory.Category.Name,
                         SubCategoryName = product.SubCategory.Name
@@ -72,7 +72,7 @@ public class MappingProfile : Profile
             .ForMember(pr => pr.SubCategoryName, opt => opt.MapFrom(p => p.SubCategory.Name))
             .ForMember(pr => pr.CategoryName, opt => opt.MapFrom(p => p.SubCategory.Category.Name))
             .ForMember(pr => pr.BrandName, opt => opt.MapFrom(p => p.Brand.Name))
-            .ForMember(pr => pr.ImagePath, opt => opt.MapFrom(p => string.Concat("/", p.ImagePath)));
+            .ForMember(pr => pr.ImagePath, opt => opt.MapFrom(p => p.ImagePath));
 
         CreateMap<IEnumerable<SubCategory>, ProductsNavigationByCategoriesViewModel>()
             .ConvertUsing((src, _) =>
