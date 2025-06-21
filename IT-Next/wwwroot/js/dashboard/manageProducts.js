@@ -1,7 +1,7 @@
 ﻿const apiUrl = apiUrls.products;
-const itemsTable = $("#items");
 const itemForm = $("#manageItems")[0];
-var counter = 1;
+let dataTable = null;
+let ignoreTimeZone = false;
 var selectedSubCategory = null;
 var selectedBrand = null;
 var $ = window.$;
@@ -19,97 +19,6 @@ var entries = {
   all: 0
 };
 var itemId = null;
-var resource = null;
-
-function matchCase(text, pattern) {
-	var result = "";
-
-	for(let i = 0; i < text.length; i++) {
-		const c = text.charAt(i);
-		const p = pattern.charCodeAt(i);
-
-		if(p >= 65 && p < 65 + 26) {
-			result += c.toUpperCase();
-		} else {
-			result += c.toLowerCase();
-		}
-	}
-
-	return result;
-}
-
-function GetData(queryObject) {
-  let result;
-  $.ajax({
-	url: apiUrl,
-	type: "GET",
-	data: queryObject,
-	async: false,
-	statusCode: {
-	  200: function (response) {
-		result = response;
-	  }
-	}
-  });
-  return result;
-}
-
-function RenderItemsTable(items, table) {
-  const tbody = $(table).find("tbody:eq(0)");
-  tbody.empty();
-  let isOdd = false;
-  for (let products of items) {
-	if (!isOdd) isOdd = true;
-	else isOdd = false;
-	AddRow(table, products, false, isOdd);
-  }
-}
-
-function AddRow(table, product, ignoreTimeZone, isOdd) {
-  if (isOdd == null)
-	isOdd = $(table).find("tr:last").hasClass("odd") ? true : false; 
-  let row = `<tr id='item_${product.id}'`;
-  if (!isOdd) row += 'class="odd"';
-  row += `><td head='Name'>${product.name}</td>
-						<td head='Category'>${product.categoryName}</td>
-						<td head='SubCategory' data-id="${product.subCategoryId}">${product.subCategoryName}</td>
-						<td head='Brand' data-id="${product.brandId}">${product.brandName}</td>
-						<td head='Price'>${product.price}</td>
-						<td head='Discount'>${product.discount}</td>
-						<td head='Quantity'>${product.quantity}</td>
-						<td head='Last Update' class="notsearchable">${FormatDateTime(GetDateTimeObjectAsClientZone(product.lastUpdate, ignoreTimeZone), "dd-MM-yyyy hh:mm a")}</td>
-						<td head='Image' class="imageColumn"><img src="${baseAppUrl}${product.imagePath}" style="width:100%;"/></td>
-						<td head='Description'>${product.description}</td>
-						<td head='Actions'>
-						<a href="${baseAppUrl}products/${product.categoryName}/${product.subCategoryName}/${product.name}" target="_blank" data-id="1"><i class="fas fa-eye me-3 mb-3"></i></a>
-						<a href="#" class="edit-btn" data-id="${product.id}"><i class="fas fa-edit me-3 mb-3"></i></a>
-						<a href="#" class="remove-btn" data-id="${product.id}"><i class="fas fa-trash"></i></a>
-						</td>
-						</tr>`;
-  $(table).find("tbody:eq(0)").append(row);
-}
-
-function CalculateEntries(
-  count,
-  queryObject,
-  currentItemsCount,
-  entriesObject
-) {
-  entriesObject.from = queryObject.pageSize * (queryObject.pageNumber - 1);
-  if (currentItemsCount)
-	entriesObject.from++;
-  entriesObject.to =
-	currentItemsCount < queryObject.pageSize
-	  ? queryObject.pageSize * (queryObject.pageNumber - 1) + currentItemsCount
-	  : queryObject.pageSize * queryObject.pageNumber;
-  entriesObject.all = count;
-}
-
-function RenderEntriesInfo(entriesObject) {
-  $("#countInfo").text(
-	`Showing ${entriesObject.from} to ${entriesObject.to} of ${entriesObject.all} entries`
-  );
-}
 
 function ClearInputs() {
   $(itemForm)[0].reset();
@@ -121,7 +30,6 @@ function ClearInputs() {
   selectedSubCategory = null;
   selectedBrand = null;
   itemId = null;
-  resource = null;
 
   const validator = $(itemForm).validate();
 
@@ -135,24 +43,6 @@ function ClearInputs() {
   validator.resetForm();
 }
 
-function LoadData(queryObject, table) {
-  resource = GetData(queryObject);
-  if (!resource.items.length && parseInt(queryObject.pageNumber) !== 1) {
-	queryObject.pageNumber = 1;
-	resource = GetData(queryObject);
-  }
-  RenderItemsTable(resource.items, table);
-  HighlightSearchResult(table, queryObject);
-  RenderPaginationButtons(
-	queryObject.pageNumber,
-	queryObject.pageSize,
-	resource.total
-  );
-  CalculateEntries(resource.total, query, resource.items.length, entries);
-  RenderEntriesInfo(entries);
-  resource = null;
-}
-
 function ConfigureSubmit(id, table) {
   $(`#${id}`).submit(function (e) {
 	e.preventDefault();
@@ -163,8 +53,8 @@ function ConfigureSubmit(id, table) {
   });
 }
 
-function ConfigureEdit(id) {
-  $("#items").on("click", "a.edit-btn", function (e) {
+function ConfigureEdit(id, table) {
+  $(table).on("click", "a.edit-btn", function (e) {
 	e.preventDefault();
 	ClearInputs();
 	id = $(this).attr("data-id");
@@ -212,7 +102,7 @@ function getFormData(form) {
 	return data;
 }
 
-function DeleteItem(id) {
+function DeleteItem(id, table) {
   $.ajax({
 	async: false,
 	url: `${apiUrl}${id}`,
@@ -229,7 +119,7 @@ function DeleteItem(id) {
 		entries.all--;
 		if (entries.from > entries.to) {
 			query.pageNumber--;
-			LoadData(query, itemsTable);
+			LoadData(query, table);
 		}
 		else
 			RenderEntriesInfo(entries);
@@ -267,157 +157,12 @@ function ConfigureDelete(table, id) {
 
   $("#deleteItem").submit(function (e) {
 	e.preventDefault();
-	DeleteItem(id);
-  });
-}
-
-function RenderPaginationButtons(pageNumber, pageSize, count) {
-  const availablePages =
-	count % pageSize === 0
-	  ? Math.floor(count / pageSize)
-	  : Math.floor(count / pageSize) + 1;
-  let minPage, maxPage;
-  if (pageNumber <= 3) minPage = 1;
-  else minPage = pageNumber - 2;
-  maxPage = minPage + 4;
-  if (maxPage > availablePages) maxPage = availablePages;
-  if (maxPage - minPage < 4) {
-	if (maxPage - minPage < availablePages) {
-	  minPage = 1;
-	}
-  }
-
-  $("#paginationSection input").remove();
-  for (let current = maxPage; current >= minPage; current--) {
-	let button = `<input type='button' value='${current}' class='btn me-1 ms-1 `;
-	if (current === parseInt(pageNumber)) button += "active";
-	button += "' ";
-	if (current === parseInt(pageNumber)) button += "disabled='disabled'";
-	button += " />";
-	$("#paginationSection a:eq(0)").after(button);
-  }
-  if (pageNumber - 1 >= minPage) {
-	$("#paginationSection a:eq(0)").val(pageNumber - 1);
-	$("#paginationSection a:eq(0)").attr("href", "#");
-  } else {
-	$("#paginationSection a:eq(0)").val(0);
-	$("#paginationSection a:eq(0)").removeAttr("href");
-  }
-  if (parseInt(pageNumber) + 1 <= maxPage) {
-	$("#paginationSection a:eq(1)").val(parseInt(pageNumber) + 1);
-	$("#paginationSection a:eq(1)").attr("href", "#");
-  } else {
-	$("#paginationSection a:eq(1)").val(0);
-	$("#paginationSection a:eq(1)").removeAttr("href");
-  }
-}
-
-function EnableSearch(queryObject, table) {
-  $("#searchText").on("change paste keyup", function () {
-	let searchText = $(this).val().trim();
-	searchText = searchText.replace("[ ]{2,}", " ");
-	if (searchText.length < 1 || searchText.length > 50)
-	  if (queryObject.searchQuery === "") return;
-	  else {
-		queryObject.searchQuery = "";
-		LoadData(queryObject, table);
-		return;
-	  }
-
-	query.searchQuery = searchText;
-	LoadData(queryObject, table);
-  });
-}
-
-function HighlightSearchResult(table, queryObject) {
-	if (queryObject.searchQuery.length < 1 || queryObject.searchQuery.length > 50)
-		return;
-
-	let numberQuery;
-	if (!isNaN(queryObject.searchQuery)) {
-		numberQuery = Number(queryObject.searchQuery) % 1 === 0
-			? parseInt(queryObject.searchQuery).toString()
-			: parseFloat(queryObject.searchQuery).toString();
-	}
-
-	const columns = $(table).find("td:not(.notsearchable)").filter(function() {
-		if (numberQuery === undefined)
-			return $(this).text().toLowerCase().indexOf(queryObject.searchQuery.toLocaleLowerCase()) > -1;
-
-		return $(this).text().toLowerCase().indexOf(queryObject.searchQuery.toLocaleLowerCase()) > -1 ||
-			$(this).text() === numberQuery;
-	});
-	for (let column of columns)
-	{
-		const columnText = $(column).text();
-		let regex = new RegExp(`(${queryObject.searchQuery})`, "gi");
-		let columnNewHtml = columnText.replace(regex, function(match) {
-			return `<span>${matchCase(queryObject.searchQuery, match)}</span>`;
-		});
-		$(column).html(columnNewHtml);
-
-		if (numberQuery !== undefined) {
-			regex = new RegExp(`(${numberQuery})`);
-			columnNewHtml = columnText.replace(regex, function() {
-				return `<span>${numberQuery}</span>`;
-			});
-			$(column).html(columnNewHtml);
-		}
-	}
-}
-
-function EnableSorting(queryObject, table) {
-  $(".sort").on("click", function () {
-	$(this).siblings().find('i').removeClass('fa-sort-up fa-sort-down');
-	const child = $(this).children("i:eq(0)");
-	queryObject.sortBy = $(this).attr('sortby');
-	$(`#sortBy option[value='${$(this).attr('sortby')}']`).prop("selected", true);
-	if (!child.hasClass("fa-sort-up") && !child.hasClass("fa-sort-down")) {
-		child.addClass("fa-sort-down");
-	  $("[name='sort'][value='desc']").prop("checked", true);
-	  queryObject.isSortAscending = false;
-	  LoadData(queryObject, table);
-	  return;
-	}
-
-	if (child.hasClass("fa-sort-up"))  {
-	  queryObject.isSortAscending = false;
-	  $("[name='sort'][value='desc']").prop("checked", true);
-	}
-	else {
-	  queryObject.isSortAscending = true;
-	  $("[name='sort'][value='asc']").prop("checked", true);
-	}
-
-	child.toggleClass("fa-sort-up fa-sort-down");
-	LoadData(queryObject, table);
-  });
-}
-
-function EnablePagination(queryObject, table) {
-  $("#pageSize").on("change", function () {
-	queryObject.pageSize = $(this).val();
-	LoadData(queryObject, table);
-  });
-
-  $("#paginationSection").on("click", "input[type=button]", function (e) {
-	e.preventDefault();
-	if ($(this).hasClass("active")) return;
-
-	queryObject.pageNumber = $(this).val();
-	LoadData(queryObject, table);
-  });
-
-  $("#paginationSection").on("click", "a", function (e) {
-	e.preventDefault();
-	if (!$(this).attr("href")) return;
-
-	queryObject.pageNumber = $(this).val();
-	LoadData(queryObject, table);
+	DeleteItem(id, table);
   });
 }
 
 function UpdateRow(id, product) {
+	const ignoreTimeZone = true;
   const row = $(`${id}`);
   row.find("td").eq(0).text(product.name);
   row.find("td").eq(1).text(product.categoryName);
@@ -428,44 +173,10 @@ function UpdateRow(id, product) {
   row.find("td").eq(4).text(product.price);
   row.find("td").eq(5).text(product.discount);
   row.find("td").eq(6).text(product.quantity);
-  row.find("td").eq(7).text(FormatDateTime(GetDateTimeObjectAsClientZone(product.lastUpdate, true), "dd-MM-yyyy hh:mm a"));
+  row.find("td").eq(7).text(FormatDateTime(GetDateTimeObjectAsClientZone(product.lastUpdate, ignoreTimeZone), "dd-MM-yyyy hh:mm a"));
   row.find("td:eq(8)").find("img:eq(0)").attr("src", product.imagePath);
   row.find("td:eq(9)").text(product.description);
   row.find("td:eq(10) > a > i.fa-eye").parent().attr("href", `/products/${product.categoryName}/${product.subCategoryName}/${product.name}`);
-}
-
-function EnableMobileSorting(queryObject, table) {
-  $("[name='sort']").on("click", function () {
-
-	const value = $(this).val();
-	if (value === "asc" && queryObject.isSortAscending === true || 
-		value === "desc" && queryObject.isSortAscending === false)
-	  return;
-
-	if (value === "asc") {
-	  $('.sort').find('i.fa-sort-down').addClass('fa-sort-up').removeClass('fa-sort-down');
-	  queryObject.isSortAscending = true;
-	  LoadData(queryObject, table);
-	  return;
-	}
-	$('.sort').find('i.fa-sort-up').addClass('fa-sort-down').removeClass('fa-sort-up');
-	queryObject.isSortAscending = false;
-	LoadData(queryObject, table);
-  });
-
-  $("#sortBy").on("click", function() {
-	  const value = $(this).val();
-	  if (value === queryObject.sortBy)
-		  return;
-
-	  $(".sort i").removeClass("fa-sort-up fa-sort-down");
-	  if (queryObject.isSortAscending)
-		$(`.sort[sortby='${value}'] i`).eq(0).addClass("fa-sort-up");
-	  else
-		  $(`.sort[sortby='${value}'] i`).eq(0).addClass("fa-sort-down");
-	  queryObject.sortBy = value;
-	  LoadData(queryObject, table);
-  });
 }
 
 function SaveItem(resource, saveType, table) {
@@ -516,7 +227,9 @@ function SaveItem(resource, saveType, table) {
 			data: resource,
 			statusCode: {
 				200: function (product) {
-					AddRow(table, product, true, null);
+					ignoreTimeZone = true;
+					dataTable.AddRow(product);
+					ignoreTimeZone = false
 					entries.from = entries.from === 0 ? ++entries.from : entries.from;
 					entries.to++;
 					entries.all++;
@@ -540,12 +253,61 @@ function SaveItem(resource, saveType, table) {
 }
 
 $(window).on("load", function () {
-  LoadData(query, itemsTable);
-
-  EnableSearch(query, itemsTable);
-  EnableSorting(query, itemsTable);
-  EnableMobileSorting(query, itemsTable);
-  EnablePagination(query, itemsTable);
+dataTable = new DataTable({ columns: [
+		{
+			selector: "name",
+			label: "Name"
+		},
+		{
+			selector: "categoryName",
+			label: "Category"
+		},
+		{
+			selector: "subCategoryName",
+			label: "SubCategory",
+			getCustomAttributes: (product) => `data-id="${product.subCategoryId}"`
+		},
+		{
+			selector: "brandName",
+			label: "Brand",
+			getCustomAttributes: (product) => `data-id="${product.brandId}"`
+		},
+		{
+			selector: "price",
+			label: "Price"
+		},
+		{
+			selector: "discount",
+			label: "Discount"
+		},
+		{
+			selector: "quantity",
+			label: "Quantity"
+		},
+		{
+			selector: "lastUpdate",
+			label: "Last update",
+			isSearchable: false,
+			getContent: (product) => FormatDateTime(GetDateTimeObjectAsClientZone(product.lastUpdate, (() => ignoreTimeZone)()), "dd-MM-yyyy hh:mm a")
+		},
+		{
+			selector: "imagePath",
+			label: "Image",
+			isSortable: false,
+			classes: ["imageColumn"],
+			getContent: (product) => `<img src="${baseAppUrl}${product.imagePath}" style="width:100%;"/>`
+		},
+		{
+			selector: "description",
+			label: "Description",
+			isSortable: false
+		}
+	], getAdditionalActions: (product) => [
+		`<a href="${baseAppUrl}products/${product.categoryName}/${product.subCategoryName}/${product.name}" target="_blank" data-id="1"><i class="fas fa-eye me-3 mb-3"></i></a>`
+	] });
+	dataTable.initialize(query);
+	
+	const itemsTable = $("#items");
 
   let origForm = getFormData($(itemForm));
 
@@ -565,25 +327,7 @@ $(window).on("load", function () {
 	ClearInputs();
   });
 
-  $(itemsTable).on("click", "tr td:first-child", function () {
-	if ($(this).css("display") !== "block") return;
-
-	if ($(this).siblings().eq(0).css("display") !== "block") {
-		$(this).siblings().show(200,
-			function() {
-				$(this).css("display", "block");
-			});
-	  $(this)
-		.parent()
-		.siblings()
-		.find("td:not(:first-child)")
-		.css("display", "none");
-	  return;
-	}
-	$(this).siblings().hide(200);
-  });
-
-  ConfigureEdit(itemId);
+  ConfigureEdit(itemId, itemsTable);
   ConfigureDelete(itemsTable, itemId);
   ConfigureSubmit(itemForm.id, itemsTable);
 
