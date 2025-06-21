@@ -311,7 +311,12 @@ function DataTable({
   allowEdit = true,
   allowDelete = true,
   getAdditionalActions = undefined,
+  pageName,
+  onOpenDeleteModal,
+  onDelete,
+  onCloseDeleteModal,
 } = props) {
+  let itemId = null;
   const availablePagesSizes = [10, 25, 50, 100];
 
   const processedColumns = columns.map((column) => ({
@@ -358,7 +363,9 @@ function DataTable({
                 : ""
             }
 						</tr>`;
-    $("#items").find("tbody:eq(0)").append(row);
+    const $row = $(row);
+    $row.data("item", item);
+    $("#items").find("tbody:eq(0)").append($row);
   };
 
   // used in LoadData function only
@@ -480,5 +487,65 @@ function DataTable({
     EnablePagination(queryObject, itemsTable);
 
     EnableBlockView(itemsTable);
+
+    ConfigureDelete(itemsTable);
+  };
+
+  function ConfigureDelete(table) {
+    $(table).on("click", "a.remove-btn", function (e) {
+      e.preventDefault();
+      const id = $(this).attr("data-id");
+      itemId = id;
+      const item = $(`#item_${id}`).data("item");
+      onOpenDeleteModal(item);
+    });
+  }
+
+  this.showDeleteModal = function (paragraph) {
+    const modalHtml = `
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Delete ${pageName.toLowerCase()}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="deleteItem">
+            <div class="modal-body">
+              <div class="mb-3">
+                <p id="deleteParagraph">${paragraph}</p>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Yes</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    `;
+
+    $("section.dataTableSection").after(modalHtml);
+    $("#deleteModal").modal("toggle");
+
+    if (onCloseDeleteModal)
+      $("#deleteModal").on("hidden.bs.modal", function () {
+        onCloseDeleteModal();
+        itemId = null;
+      });
+
+    $("#deleteItem").submit(function (e) {
+      e.preventDefault();
+      onDelete(itemId, $("#items"));
+    });
+  };
+
+  this.closeDeleteModal = function () {
+    if (onCloseDeleteModal) onCloseDeleteModal();
+    itemId = null;
+
+    $("#deleteModal").modal("toggle");
+    $("#deleteModal").remove();
   };
 }

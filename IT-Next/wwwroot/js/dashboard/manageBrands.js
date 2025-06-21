@@ -66,7 +66,7 @@ function DeleteItem(id, table) {
 	method: "DELETE",
 	statusCode: {
 	  404: function () {
-		$("#deleteModal").modal("toggle");
+		dataTable.closeDeleteModal();
 		window.DisplayToastNotification("Brand not found.");
 	  },
 	  204: function () {
@@ -80,27 +80,15 @@ function DeleteItem(id, table) {
         }
 		else
             RenderEntriesInfo(entries);
-		$("#deleteModal").modal("toggle");
+		dataTable.closeDeleteModal();
 		window.DisplayToastNotification("Brand have been deleted successfully.");
 	  }
 	}
   });
 }
 
-function ConfigureDelete(table, id) {
-  $(table).on("click", "a.remove-btn", function (e) {
-	e.preventDefault();
-	id = $(this).attr("data-id");
-	const tableRow = $(`#item_${id}`);
-	const brandName = tableRow.children(":eq(0)").text();
-	$("#deleteParagraph").html(`Are you sure you want to delete this brand?<div>Name: ${brandName}</div>`);
-	$("#deleteModal").modal("toggle");
-  });
-
-  $("#deleteItem").submit(function (e) {
-	e.preventDefault();
-	DeleteItem(id, table);
-  });
+function handleOpenDeleteModal(brand) {
+	dataTable.showDeleteModal(`Are you sure you want to delete this brand?<div>Name: ${brand.name}</div>`);
 }
 
 function UpdateRow(id, brand) {
@@ -153,7 +141,12 @@ $(window).on("load", function () {
 	dataTable = new DataTable({ columns: [
 		{selector: "name",
 		label: "Name"}
-	]});
+	], pageName: "Brand",
+	onDelete: DeleteItem,
+	onOpenDeleteModal: handleOpenDeleteModal,
+	onCloseDeleteModal: () => {
+		ClearInputs();
+	}});
 	dataTable.initialize(query);
 
 	const itemsTable = $("#items");
@@ -172,12 +165,11 @@ $(window).on("load", function () {
 	origForm = $(itemForm).serialize();
   });
 
-  $("#manageModal, #deleteModal").on("hidden.bs.modal", function () {
+  $("#manageModal").on("hidden.bs.modal", function () {
 	ClearInputs();
   });
 
   ConfigureEdit(itemId, itemsTable);
-  ConfigureDelete(itemsTable, itemId);
   ConfigureSubmit(itemForm.id);
 
   $(itemForm).data('validator').settings.ignore = null;

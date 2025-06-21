@@ -92,7 +92,7 @@ function DeleteItem(id, table) {
 	method: "DELETE",
 	statusCode: {
 	  404: function () {
-		$("#deleteModal").modal("toggle");
+		dataTable.closeDeleteModal();
 		window.DisplayToastNotification("Sub category not found.");
 	  },
 	  204: function () {
@@ -106,28 +106,15 @@ function DeleteItem(id, table) {
 		}
 		else
 			RenderEntriesInfo(entries);
-		$("#deleteModal").modal("toggle");
+		dataTable.closeDeleteModal();
 		window.DisplayToastNotification("Sub category have been deleted successfully.");
 	  }
 	}
   });
 }
 
-function ConfigureDelete(table, id) {
-  $(table).on("click", "a.remove-btn", function (e) {
-	e.preventDefault();
-	id = $(this).attr("data-id");const tableRow = $(`#item_${id}`);
-	const subCategoryName = tableRow.children(":eq(0)").text();
-	const categoryName = tableRow.children(":eq(1)").text();
-	$("#deleteParagraph").html(`Are you sure you want to delete this sub category?
-<div>Name: ${subCategoryName}</div><div>Category: ${categoryName}</div>`);
-	$("#deleteModal").modal("toggle");
-  });
-
-  $("#deleteItem").submit(function (e) {
-	e.preventDefault();
-	DeleteItem(id, table);
-  });
+function handleOpenDeleteModal(subCategory) {
+	dataTable.showDeleteModal(`Are you sure you want to delete this sub category?<div>Name: ${subCategory.name}</div><div>Category: ${subCategory.categoryName}</div>`);
 }
 
 function UpdateRow(id, subCategory) {
@@ -185,7 +172,12 @@ dataTable = new DataTable({ columns: [
 		{selector: "categoryName",
 		label: "Category",
 		getCustomAttributes: (subCategory) => `data-id="${subCategory.categoryId}"`}
-	]});
+	], pageName: "Sub Category",
+	onDelete: DeleteItem,
+	onOpenDeleteModal: handleOpenDeleteModal,
+	onCloseDeleteModal: () => {
+		ClearInputs();
+	}});
 	dataTable.initialize(query);
 
 	const itemsTable = $("#items");
@@ -204,12 +196,11 @@ dataTable = new DataTable({ columns: [
 	origForm = $(itemForm).serialize();
   });
 
-  $("#manageModal, #deleteModal").on("hidden.bs.modal", function () {
+  $("#manageModal").on("hidden.bs.modal", function () {
 	ClearInputs();
   });
 
   ConfigureEdit(itemId, itemsTable);
-  ConfigureDelete(itemsTable, itemId);
   ConfigureSubmit(itemForm.id, itemsTable);
 
   $(itemForm).data('validator').settings.ignore = null;

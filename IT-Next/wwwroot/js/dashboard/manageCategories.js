@@ -66,7 +66,7 @@ function DeleteItem(id, table) {
 	method: "DELETE",
 	statusCode: {
 	  404: function () {
-		$("#deleteModal").modal("toggle");
+		dataTable.closeDeleteModal();
 		window.DisplayToastNotification("Category not found.");
 	  },
 	  204: function () {
@@ -81,28 +81,15 @@ function DeleteItem(id, table) {
 		else
 			RenderEntriesInfo(entries);
 		RenderEntriesInfo(entries);
-		$("#deleteModal").modal("toggle");
+		dataTable.closeDeleteModal();
 		window.DisplayToastNotification("Category have been deleted successfully.");
 	  }
 	}
   });
 }
 
-function ConfigureDelete(table, id) {
-	
-  $(table).on("click", "a.remove-btn", function (e) {
-	e.preventDefault();
-	id = $(this).attr("data-id");
-	const tableRow = $(`#item_${id}`);
-	const categoryName = tableRow.children(":eq(0)").text();
-	$("#deleteParagraph").html(`Are you sure you want to delete this category?<div>Name: ${categoryName}</div>`);
-	$("#deleteModal").modal("toggle");
-  });
-
-  $("#deleteItem").submit(function (e) {
-	e.preventDefault();
-	DeleteItem(id, table);
-  });
+function handleOpenDeleteModal(category) {
+	dataTable.showDeleteModal(`Are you sure you want to delete this category?<div>Name: ${category.name}</div>`);
 }
 
 function UpdateRow(id, category) {
@@ -155,7 +142,12 @@ $(window).on("load", function () {
 	dataTable = new DataTable({ columns: [
 		{selector: "name",
 		label: "Name"}
-	]});
+	], pageName: "Category",
+	onDelete: DeleteItem,
+	onOpenDeleteModal: handleOpenDeleteModal,
+	onCloseDeleteModal: () => {
+		ClearInputs();
+	}});
 	dataTable.initialize(query);
 
 	const itemsTable = $("#items");
@@ -174,12 +166,11 @@ $(window).on("load", function () {
 	origForm = $(itemForm).serialize();
   });
 
-  $("#manageModal, #deleteModal").on("hidden.bs.modal", function () {
+  $("#manageModal").on("hidden.bs.modal", function () {
 	ClearInputs();
   });
 
   ConfigureEdit(itemId, itemsTable);
-  ConfigureDelete(itemsTable, itemId);
   ConfigureSubmit(itemForm.id, itemsTable);
 
   $(itemForm).data('validator').settings.ignore = null;

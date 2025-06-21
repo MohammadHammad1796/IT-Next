@@ -29,7 +29,7 @@ function DeleteItem(id, table) {
 	method: "DELETE",
 	statusCode: {
 	  404: function () {
-		$("#deleteModal").modal("toggle");
+		dataTable.closeDeleteModal();
 		window.DisplayToastNotification("Message not found.");
 	  },
 	  204: function () {
@@ -43,34 +43,18 @@ function DeleteItem(id, table) {
 		}
 		else
 			RenderEntriesInfo(entries);
-		$("#deleteModal").modal("toggle");
+		dataTable.closeDeleteModal();
 		window.DisplayToastNotification("Message have been deleted successfully.");
 	  }
 	}
   });
 }
 
-function ConfigureDelete(table, id) {
-  $(table).on("click", "a.remove-btn", function (e) {
-	e.preventDefault();
-	id = $(this).attr("data-id");const tableRow = $(`#item_${id}`);
-	const customerName = tableRow.children(":eq(0)").text();
-	const email = tableRow.children(":eq(1)").find("a:eq(0)").text();
-	const mobileNumber = tableRow.children(":eq(2)").find("a:eq(0)").text();
-    const time = tableRow.children(":eq(3)").text();
-    const status = tableRow.children(":eq(4)").text();
-    const message = tableRow.children(":eq(5)").text();
-    $("#deleteParagraph").html(`Are you sure you want to delete this message?
-<div>Customer name: ${customerName}</div><div>Email: ${email}</div>
-<div>Mobile number: ${mobileNumber}</div><div>Time: ${time}</div>
-<div>Status: ${status}</div><div>Message: ${message}</div>`);
-	$("#deleteModal").modal("toggle");
-  });
-
-  $("#deleteItem").submit(function (e) {
-	e.preventDefault();
-	DeleteItem(id, table);
-  });
+function handleOpenDeleteModal(message) {
+	dataTable.showDeleteModal(`Are you sure you want to delete this message?
+<div>Customer name: ${message.customerName}</div><div>Email: ${message.email}</div>
+<div>Mobile number: ${message.mobileNumber}</div><div>Time: ${formatMessageTime(message)}</div>
+<div>Status: ${formatMessageStatus(message)}</div><div>Message: ${message.message}</div>`);
 }
 
 function ConfigureToggleStatus(table, id) {
@@ -85,7 +69,7 @@ function ToggleStatusInRow(id) {
   const row = $(`${id}`);
   const previousStatus = row.find("td").eq(4).text();
   const isNew = previousStatus.toLowerCase() !== "new";
-  const newStatus = isNew ? "New" : "Readed";
+  const newStatus = isNew ? "New" : "Read";
   row.find("td").eq(4).text(newStatus);
   row.find("td").eq(6).find("a.toggleStatus-btn > i:eq(0)").toggleClass("fa-eye").toggleClass("fa-eye-slash");
 }
@@ -107,8 +91,12 @@ function ToggleStatus(id) {
   });
 }
 
+const ignoreTimeZone = false;
+const formatMessageTime = (message) => `${FormatDateTime(GetDateTimeObjectAsClientZone(message.time, ignoreTimeZone), "dd-MM-yyyy hh:mm a")}`;
+
+const formatMessageStatus = (message) => `${message.isRead ? "read" : "New"}`;
+
 $(window).on("load", function () {
-	const ignoreTimeZone = false;
 dataTable = new DataTable({ columns: [
 		{
 			selector: "customerName",
@@ -127,12 +115,12 @@ dataTable = new DataTable({ columns: [
 		{
 			selector: "time",
 			label: "Time",
-			getContent: (message) => `${FormatDateTime(GetDateTimeObjectAsClientZone(message.time, ignoreTimeZone), "dd-MM-yyyy hh:mm a")}`
+			getContent: formatMessageTime
 		},
 		{
 			selector: "isRead",
 			label: "Status",
-			getContent: (message) => `${message.isRead ? "Readed" : "New"}`
+			getContent: formatMessageStatus
 		},
 		{
 			selector: "message",
@@ -140,15 +128,15 @@ dataTable = new DataTable({ columns: [
 		}
 	], allowEdit: false, getAdditionalActions: (message) => [
 		`<a href="#" class="toggleStatus-btn" data-id="${message.id}"><i class="fas ${message.isRead ? "fa-eye-slash" : "fa-eye"} me-3"></i></a>`
-	] });
+	], pageName: "Message",
+	onDelete: DeleteItem,
+	onOpenDeleteModal: handleOpenDeleteModal,
+	onCloseDeleteModal: () => {
+		ClearInputs();
+	} });
 	dataTable.initialize(query);
 
 	const itemsTable = $("#items");
 
-  $("#deleteModal").on("hidden.bs.modal", function () {
-	ClearInputs();
-  });
-
   ConfigureToggleStatus(itemsTable, itemId);
-  ConfigureDelete(itemsTable, itemId);
 });

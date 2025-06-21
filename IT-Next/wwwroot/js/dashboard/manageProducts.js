@@ -109,7 +109,7 @@ function DeleteItem(id, table) {
 	method: "DELETE",
 	statusCode: {
 	  404: function () {
-		$("#deleteModal").modal("toggle");
+		dataTable.closeDeleteModal();
 		window.DisplayToastNotification("Product not found.");
 	  },
 	  204: function () {
@@ -123,42 +123,22 @@ function DeleteItem(id, table) {
 		}
 		else
 			RenderEntriesInfo(entries);
-		$("#deleteModal").modal("toggle");
+		dataTable.closeDeleteModal();
 		window.DisplayToastNotification("Product have been deleted successfully.");
 	  }
 	}
   });
 }
 
-function ConfigureDelete(table, id) {
-  $(table).on("click", "a.remove-btn", function (e) {
-	e.preventDefault();
-	id = $(this).attr("data-id");const tableRow = $(`#item_${id}`);
-	const productName = tableRow.children(":eq(0)").text();
-	const category = tableRow.children(":eq(1)").text();
-	const subCategory = tableRow.children(":eq(2)").text();
-	const brand = tableRow.children(":eq(3)").text();
-	const price = tableRow.children(":eq(4)").text();
-	const discount = tableRow.children(":eq(5)").text();
-	const quantity = tableRow.children(":eq(6)").text();
-	const lastUpdate = tableRow.children(":eq(7)").text();
-	const image = tableRow.children(":eq(8)").find("img:eq(0)").attr("src");
-	const description = tableRow.children(":eq(9)").text();
-
-	$("#deleteParagraph").html(`<p>Are you sure you want to delete this product?</p>
+function handleOpenDeleteModal(product) {
+	dataTable.showDeleteModal(`<p>Are you sure you want to delete this product?</p>
 		<div class="col-md-6 col-8">
-		<div>Name: ${productName}</div><div>Category: ${category}</div>
-		<div>Subcategory: ${subCategory}</div><div>Brand: ${brand}</div>
-		<div>Price: ${price}</div><div>Discount: ${discount}</div>
-		<div>Quantity: ${quantity}</div><div>Last Update: ${lastUpdate}</div>
-		<div>Description: ${description}</div></div><div class="col-md-6 col-4"><img src="${image}" style="width:95%;"/></div>`);
-	$("#deleteModal").modal("toggle");
-  });
-
-  $("#deleteItem").submit(function (e) {
-	e.preventDefault();
-	DeleteItem(id, table);
-  });
+		<div>Name: ${product.name}</div><div>Category: ${product.categoryName}</div>
+		<div>Subcategory: ${product.subCategoryName}</div><div>Brand: ${product.brandName}</div>
+		<div>Price: ${product.price}</div><div>Discount: ${product.discount}</div>
+		<div>Quantity: ${product.quantity}</div><div>Last Update: ${formatLastUpdateTime(product)}</div>
+		<div>Description: ${product.description}</div></div><div class="col-md-6 col-4"><img src="${getImageSource(product)}" style="width:95%;"/></div>`
+	);
 }
 
 function UpdateRow(id, product) {
@@ -252,6 +232,9 @@ function SaveItem(resource, saveType, table) {
 	}
 }
 
+const formatLastUpdateTime = (product) => FormatDateTime(GetDateTimeObjectAsClientZone(product.lastUpdate, (() => ignoreTimeZone)()), "dd-MM-yyyy hh:mm a");
+const getImageSource = (product) => baseAppUrl + product.imagePath;
+
 $(window).on("load", function () {
 dataTable = new DataTable({ columns: [
 		{
@@ -288,14 +271,14 @@ dataTable = new DataTable({ columns: [
 			selector: "lastUpdate",
 			label: "Last update",
 			isSearchable: false,
-			getContent: (product) => FormatDateTime(GetDateTimeObjectAsClientZone(product.lastUpdate, (() => ignoreTimeZone)()), "dd-MM-yyyy hh:mm a")
+			getContent: formatLastUpdateTime
 		},
 		{
 			selector: "imagePath",
 			label: "Image",
 			isSortable: false,
 			classes: ["imageColumn"],
-			getContent: (product) => `<img src="${baseAppUrl}${product.imagePath}" style="width:100%;"/>`
+			getContent: (product) => `<img src="${getImageSource(product)}" style="width:100%;"/>`
 		},
 		{
 			selector: "description",
@@ -304,7 +287,12 @@ dataTable = new DataTable({ columns: [
 		}
 	], getAdditionalActions: (product) => [
 		`<a href="${baseAppUrl}products/${product.categoryName}/${product.subCategoryName}/${product.name}" target="_blank" data-id="1"><i class="fas fa-eye me-3 mb-3"></i></a>`
-	] });
+	], pageName: "Product",
+	onDelete: DeleteItem,
+	onOpenDeleteModal: handleOpenDeleteModal,
+	onCloseDeleteModal: () => {
+		ClearInputs();
+	} });
 	dataTable.initialize(query);
 	
 	const itemsTable = $("#items");
@@ -323,12 +311,11 @@ dataTable = new DataTable({ columns: [
 	origForm = getFormData($(itemForm));
   });
 
-  $("#manageModal, #deleteModal").on("hidden.bs.modal", function () {
+  $("#manageModal").on("hidden.bs.modal", function () {
 	ClearInputs();
   });
 
   ConfigureEdit(itemId, itemsTable);
-  ConfigureDelete(itemsTable, itemId);
   ConfigureSubmit(itemForm.id, itemsTable);
 
   $(itemForm).data("validator").settings.ignore = null;
