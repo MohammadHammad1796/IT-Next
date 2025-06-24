@@ -308,6 +308,7 @@ function EnableBlockView(table) {
 function DataTable({
   columns = [],
   itemKey = "id",
+  allowAdd = true,
   allowEdit = true,
   allowDelete = true,
   getAdditionalActions = undefined,
@@ -327,6 +328,25 @@ function DataTable({
 
   this.AddRow = function (item) {
     let row = `<tr id='item_${item[itemKey]}'>
+            ${
+              allowEdit || allowDelete || getAdditionalActions
+                ? `
+            <td head='Actions' class="actions">
+						${
+              allowEdit
+                ? `<a href="#" class="edit-btn" data-id="${item[itemKey]}"><i class="fas fa-edit me-3"></i></a>`
+                : ""
+            }
+						${
+              allowDelete
+                ? `<a href="#" class="remove-btn" data-id="${item[itemKey]}"><i class="fas fa-trash"></i></a>`
+                : ""
+            }
+            ${getAdditionalActions ? getAdditionalActions(item).join("") : ""}
+						</td>
+            `
+                : ""
+            }
             ${columns
               .map(
                 (column) =>
@@ -343,25 +363,6 @@ function DataTable({
                   }</td>`
               )
               .join("")}
-            ${
-              allowEdit || allowDelete || getAdditionalActions
-                ? `
-            <td head='Actions'>
-						${
-              allowEdit
-                ? `<a href="#" class="edit-btn" data-id="${item[itemKey]}"><i class="fas fa-edit me-3"></i></a>`
-                : ""
-            }
-						${
-              allowDelete
-                ? `<a href="#" class="remove-btn" data-id="${item[itemKey]}"><i class="fas fa-trash"></i></a>`
-                : ""
-            }
-            ${getAdditionalActions ? getAdditionalActions(item).join("") : ""}
-						</td>
-            `
-                : ""
-            }
 						</tr>`;
     const $row = $(row);
     $row.data("item", item);
@@ -441,6 +442,14 @@ function DataTable({
       <table id="items" class="table border-bottom border-top">
         <thead>
           <tr>
+            ${
+              allowEdit || allowDelete || getAdditionalActions || allowAdd
+                ? `<th class="actions">${ 
+                  allowAdd
+                    ? `<a href="#" class="add-btn" title="New"><i class="fas fa-plus"></i></a>`
+                    : ""
+                  }</th>` : ""
+            }
             ${processedColumns
               .map(
                 (column, index) => `
@@ -461,7 +470,6 @@ function DataTable({
             `
               )
               .join("")}
-            <th>Actions</th>
           </tr>
         </thead>
         <tbody></tbody>

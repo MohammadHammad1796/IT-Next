@@ -299,11 +299,13 @@ dataTable = new DataTable({ columns: [
 
   let origForm = getFormData($(itemForm));
 
-  $("#new").on("click", function () {
-	$('#manageModal button[type="submit"]').text("Add");
-	$("#manageModalLabel").text("New Product");
-	ClearInputs();
-  });
+    $("a.add-btn").on("click", function (e) {
+		e.preventDefault();
+		$('#manageModal button[type="submit"]').text("Add");
+		$("#manageModalLabel").text("New product");
+		ClearInputs();
+		$('#manageModal').modal("show");
+	});
 
   $("#manageModal").on("shown.bs.modal", function () {
 	$(this).find("input:first").focus();

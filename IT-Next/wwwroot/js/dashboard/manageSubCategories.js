@@ -184,11 +184,13 @@ dataTable = new DataTable({ columns: [
 
   let origForm = $(itemForm).serialize();
 
-  $("#new").on("click", function () {
-	$('#manageModal button[type="submit"]').text("Add");
-	$("#manageModalLabel").text("New sub category");
-	ClearInputs();
-  });
+    $("a.add-btn").on("click", function (e) {
+		e.preventDefault();
+		$('#manageModal button[type="submit"]').text("Add");
+		$("#manageModalLabel").text("New sub category");
+		ClearInputs();
+		$('#manageModal').modal("show");
+	});
 
   $("#manageModal").on("shown.bs.modal", function () {
 	$(this).find("input:first").focus();

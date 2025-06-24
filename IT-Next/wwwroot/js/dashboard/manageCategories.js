@@ -153,11 +153,13 @@ $(window).on("load", function () {
 	const itemsTable = $("#items");
 
   let origForm = $(itemForm).serialize();
-
-  $("#new").on("click", function () {
+  
+  $("a.add-btn").on("click", function (e) {
+	e.preventDefault();
 	$('#manageModal button[type="submit"]').text("Add");
 	$("#manageModalLabel").text("New category");
 	ClearInputs();
+	$('#manageModal').modal("show");
   });
 
   $("#manageModal").on("shown.bs.modal", function () {

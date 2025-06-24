@@ -126,7 +126,7 @@ dataTable = new DataTable({ columns: [
 			selector: "message",
 			label: "Message"
 		}
-	], allowEdit: false, getAdditionalActions: (message) => [
+	], allowEdit: false, allowAdd: false, getAdditionalActions: (message) => [
 		`<a href="#" class="toggleStatus-btn" data-id="${message.id}"><i class="fas ${message.isRead ? "fa-eye-slash" : "fa-eye"} me-3"></i></a>`
 	], pageName: "Message",
 	onDelete: DeleteItem,
