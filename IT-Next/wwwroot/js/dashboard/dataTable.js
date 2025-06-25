@@ -313,11 +313,10 @@ function DataTable({
   allowDelete = true,
   getAdditionalActions = undefined,
   pageName,
-  onOpenDeleteModal,
+  getDeleteParagraph,
   onDelete,
   onCloseDeleteModal,
 } = props) {
-  let itemId = null;
   const availablePagesSizes = [10, 25, 50, 100];
 
   const processedColumns = columns.map((column) => ({
@@ -444,11 +443,12 @@ function DataTable({
           <tr>
             ${
               allowEdit || allowDelete || getAdditionalActions || allowAdd
-                ? `<th class="actions">${ 
-                  allowAdd
-                    ? `<a href="#" class="add-btn" title="New"><i class="fas fa-plus"></i></a>`
-                    : ""
-                  }</th>` : ""
+                ? `<th class="actions">${
+                    allowAdd
+                      ? `<a href="#" class="add-btn" title="New"><i class="fas fa-plus"></i></a>`
+                      : ""
+                  }</th>`
+                : ""
             }
             ${processedColumns
               .map(
@@ -500,60 +500,26 @@ function DataTable({
   };
 
   function ConfigureDelete(table) {
+    if (!allowDelete) return;
+
     $(table).on("click", "a.remove-btn", function (e) {
       e.preventDefault();
       const id = $(this).attr("data-id");
-      itemId = id;
+      const itemId = id;
       const item = $(`#item_${id}`).data("item");
-      onOpenDeleteModal(item);
+
+      const deleteParagraph =
+        (getDeleteParagraph && getDeleteParagraph(item)) || "";
+
+      const deleteModal = new DeleteModal({
+        containerSelector: "section.dataTableSection",
+        itemId,
+        pageName,
+        onDelete,
+        onCloseDeleteModal,
+        deleteParagraph,
+      });
+      deleteModal.open();
     });
   }
-
-  this.showDeleteModal = function (paragraph) {
-    const modalHtml = `
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deleteModalLabel">Delete ${pageName.toLowerCase()}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <form id="deleteItem">
-            <div class="modal-body">
-              <div class="mb-3">
-                <p id="deleteParagraph">${paragraph}</p>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-primary">Yes</button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-    `;
-
-    $("section.dataTableSection").after(modalHtml);
-    $("#deleteModal").modal("toggle");
-
-    if (onCloseDeleteModal)
-      $("#deleteModal").on("hidden.bs.modal", function () {
-        onCloseDeleteModal();
-        itemId = null;
-      });
-
-    $("#deleteItem").submit(function (e) {
-      e.preventDefault();
-      onDelete(itemId, $("#items"));
-    });
-  };
-
-  this.closeDeleteModal = function () {
-    if (onCloseDeleteModal) onCloseDeleteModal();
-    itemId = null;
-
-    $("#deleteModal").modal("toggle");
-    $("#deleteModal").remove();
-  };
 }

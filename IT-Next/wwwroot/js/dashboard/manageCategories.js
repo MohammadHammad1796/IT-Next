@@ -8,12 +8,12 @@ var query = {
   pageSize: 10,
   isSortAscending: true,
   searchQuery: "",
-  sortBy: "name"
+  sortBy: "name",
 };
 var entries = {
   from: 0,
   to: 0,
-  all: 0
+  all: 0,
 };
 var itemId = null;
 
@@ -25,9 +25,9 @@ function ClearInputs() {
   const validator = $(itemForm).validate();
 
   const errors = $(itemForm).find(".field-validation-error span");
-  errors.each(function() {
-	  validator.settings.success($(this));
-	  $(this).remove();
+  errors.each(function () {
+    validator.settings.success($(this));
+    $(this).remove();
   });
 
   $(".field-validation-valid span").remove();
@@ -36,60 +36,58 @@ function ClearInputs() {
 
 function ConfigureSubmit(id) {
   $(`#${id}`).submit(function (e) {
-	e.preventDefault();
+    e.preventDefault();
 
-	const categoryResource = getFormDataAsJson($(this));
-	const submitType = $('#manageModal button[type="submit"]').text();
-	SaveItem(categoryResource, submitType);
+    const categoryResource = getFormDataAsJson($(this));
+    const submitType = $('#manageModal button[type="submit"]').text();
+    SaveItem(categoryResource, submitType);
   });
 }
 
 function ConfigureEdit(id, table) {
   $(table).on("click", "a.edit-btn", function (e) {
-	e.preventDefault();
-	ClearInputs();
-	id = $(this).attr("data-id");
-	const tableRow = $(`#item_${id}`);
-	$("#Id").val(id);
-	const categoryName = tableRow.children(":eq(0)").text();
-	$("#Name").val(categoryName);
-	$('#manageModal button[type="submit"]').text("Save");
-	$("#manageModalLabel").text(`Edit category: ${categoryName}`);
-	$("#manageModal").modal("toggle");
+    e.preventDefault();
+    ClearInputs();
+    id = $(this).attr("data-id");
+    const tableRow = $(`#item_${id}`);
+    $("#Id").val(id);
+    const categoryName = tableRow.children(":eq(0)").text();
+    $("#Name").val(categoryName);
+    $('#manageModal button[type="submit"]').text("Save");
+    $("#manageModalLabel").text(`Edit category: ${categoryName}`);
+    $("#manageModal").modal("toggle");
   });
 }
 
 function DeleteItem(id, table) {
-  $.ajax({
-	async: false,
-	url: `${apiUrl}${id}`,
-	method: "DELETE",
-	statusCode: {
-	  404: function () {
-		dataTable.closeDeleteModal();
-		window.DisplayToastNotification("Category not found.");
-	  },
-	  204: function () {
-		$(`#item_${id}`).remove();
-		entries.from = entries.to === 1 ? --entries.from : entries.from;
-		entries.to--;
-		entries.all--;
-		if (entries.from > entries.to) {
-			query.pageNumber--;
-			LoadData(query, table);
-		}
-		else
-			RenderEntriesInfo(entries);
-		RenderEntriesInfo(entries);
-		dataTable.closeDeleteModal();
-		window.DisplayToastNotification("Category have been deleted successfully.");
-	  }
-	}
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      async: false,
+      url: `${apiUrl}${id}`,
+      method: "DELETE",
+      statusCode: {
+        404: function () {
+          reject("Category not found.");
+        },
+        204: function () {
+          $(`#item_${id}`).remove();
+          entries.from = entries.to === 1 ? --entries.from : entries.from;
+          entries.to--;
+          entries.all--;
+          if (entries.from > entries.to) {
+            query.pageNumber--;
+            LoadData(query, table);
+          } else RenderEntriesInfo(entries);
+          RenderEntriesInfo(entries);
+          resolve("Category have been deleted successfully.");
+        },
+      },
+    });
   });
 }
 
-function handleOpenDeleteModal(category) {
-	dataTable.showDeleteModal(`Are you sure you want to delete this category?<div>Name: ${category.name}</div>`);
+function generateDeleteParagraph(category) {
+  return `Are you sure you want to delete this category?<div>Name: ${category.name}</div>`;
 }
 
 function UpdateRow(id, category) {
@@ -99,87 +97,87 @@ function UpdateRow(id, category) {
 
 function SaveItem(resource, saveType) {
   $.ajax({
-	async: false,
-	url: apiUrl,
-	method: "POST",
-	contentType: "application/json",
-	dataType: "json",
-	data: resource,
-	statusCode: {
-	  200: function (category) {
-		let message = "";
-		switch (saveType) {
-		  case "Save":
-			UpdateRow(`#item_${category.id}`, category);
-			message = "Changes have been saved successfully.";
-			break;
-		  case "Add":
-			dataTable.AddRow(category);
-			entries.from = entries.from === 0 ? ++entries.from : entries.from;
-			entries.to++;
-			entries.all++;
-			RenderEntriesInfo(entries);
-			message = "Category have been added successfully.";
-			break;
-		}
+    async: false,
+    url: apiUrl,
+    method: "POST",
+    contentType: "application/json",
+    dataType: "json",
+    data: resource,
+    statusCode: {
+      200: function (category) {
+        let message = "";
+        switch (saveType) {
+          case "Save":
+            UpdateRow(`#item_${category.id}`, category);
+            message = "Changes have been saved successfully.";
+            break;
+          case "Add":
+            dataTable.AddRow(category);
+            entries.from = entries.from === 0 ? ++entries.from : entries.from;
+            entries.to++;
+            entries.all++;
+            RenderEntriesInfo(entries);
+            message = "Category have been added successfully.";
+            break;
+        }
 
-		$("#manageModal").modal("toggle");
-		window.DisplayToastNotification(message);
-	  },
-	  400: function (response) {
-		var data = JSON.parse(response.responseText);
-		$("#manageItems").data("validator").showErrors(data);
-	  },
-	  404: function () {
-		$("#manageModal").modal("toggle");
-		window.DisplayToastNotification("Category not found.");
-	  }
-	}
+        $("#manageModal").modal("toggle");
+        window.DisplayToastNotification(message);
+      },
+      400: function (response) {
+        var data = JSON.parse(response.responseText);
+        $("#manageItems").data("validator").showErrors(data);
+      },
+      404: function () {
+        $("#manageModal").modal("toggle");
+        window.DisplayToastNotification("Category not found.");
+      },
+    },
   });
 }
 
 $(window).on("load", function () {
-	dataTable = new DataTable({ columns: [
-		{selector: "name",
-		label: "Name"}
-	], pageName: "Category",
-	onDelete: DeleteItem,
-	onOpenDeleteModal: handleOpenDeleteModal,
-	onCloseDeleteModal: () => {
-		ClearInputs();
-	}});
-	dataTable.initialize(query);
+  dataTable = new DataTable({
+    columns: [{ selector: "name", label: "Name" }],
+    pageName: "Category",
+    onDelete: DeleteItem,
+    getDeleteParagraph: generateDeleteParagraph,
+    onCloseDeleteModal: () => {
+      ClearInputs();
+    },
+  });
+  dataTable.initialize(query);
 
-	const itemsTable = $("#items");
+  const itemsTable = $("#items");
 
   let origForm = $(itemForm).serialize();
-  
+
   $("a.add-btn").on("click", function (e) {
-	e.preventDefault();
-	$('#manageModal button[type="submit"]').text("Add");
-	$("#manageModalLabel").text("New category");
-	ClearInputs();
-	$('#manageModal').modal("show");
+    e.preventDefault();
+    $('#manageModal button[type="submit"]').text("Add");
+    $("#manageModalLabel").text("New category");
+    ClearInputs();
+    $("#manageModal").modal("show");
   });
 
   $("#manageModal").on("shown.bs.modal", function () {
-	$(this).find("input:first").focus();
-	$("#addBtn").attr("disabled", "disabled");
-	origForm = $(itemForm).serialize();
+    $(this).find("input:first").focus();
+    $("#addBtn").attr("disabled", "disabled");
+    origForm = $(itemForm).serialize();
   });
 
   $("#manageModal").on("hidden.bs.modal", function () {
-	ClearInputs();
+    ClearInputs();
   });
 
   ConfigureEdit(itemId, itemsTable);
   ConfigureSubmit(itemForm.id, itemsTable);
 
-  $(itemForm).data('validator').settings.ignore = null;
+  $(itemForm).data("validator").settings.ignore = null;
 
   $(itemForm).on("change input blur keyup paste", "input", function () {
-	if ($(itemForm).serialize() !== origForm && $(itemForm).valid())
-	  $("#addBtn").removeAttr("disabled");
-	else $("#addBtn").attr("disabled", "disabled");
+    if ($(itemForm).serialize() !== origForm && $(itemForm).valid())
+      $("#addBtn").removeAttr("disabled");
+    else $("#addBtn").attr("disabled", "disabled");
   });
 });
