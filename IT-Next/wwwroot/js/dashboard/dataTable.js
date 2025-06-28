@@ -176,20 +176,23 @@ function LoadData(queryObject, table) {
 }
 
 function EnableSearch(queryObject, table) {
-  $("#searchText").on("change paste keyup", function () {
-    let searchText = $(this).val().trim();
-    searchText = searchText.replace("[ ]{2,}", " ");
-    if (searchText.length < 2 || searchText.length > 50)
-      if (queryObject.searchQuery === "") return;
-      else {
-        queryObject.searchQuery = "";
-        LoadData(queryObject, table);
-        return;
-      }
+  $("#searchText").on(
+    "input",
+    debounce(function () {
+      let searchText = $(this).val().trim();
+      searchText = searchText.replace("[ ]{2,}", " ");
+      if (searchText.length < 2 || searchText.length > 50)
+        if (queryObject.searchQuery === "") return;
+        else {
+          queryObject.searchQuery = "";
+          LoadData(queryObject, table);
+          return;
+        }
 
-    query.searchQuery = searchText;
-    LoadData(queryObject, table);
-  });
+      query.searchQuery = searchText;
+      LoadData(queryObject, table);
+    }, 300)
+  );
 }
 
 function EnableSorting(queryObject, table) {
@@ -307,6 +310,7 @@ function EnableBlockView(table) {
 
 function DataTable({
   columns = [],
+  fields = [],
   itemKey = "id",
   allowAdd = true,
   allowEdit = true,
@@ -316,6 +320,8 @@ function DataTable({
   getDeleteParagraph,
   onDelete,
   onCloseDeleteModal,
+  onSave,
+  onCloseManageModal,
 } = props) {
   const availablePagesSizes = [10, 25, 50, 100];
 
@@ -325,11 +331,11 @@ function DataTable({
     isSearchable: "isSearchable" in column ? column.isSearchable : true,
   }));
 
-  this.AddRow = function (item) {
-    let row = `<tr id='item_${item[itemKey]}'>
-            ${
-              allowEdit || allowDelete || getAdditionalActions
-                ? `
+  const buildRow = function (item) {
+    return `
+      ${
+        allowEdit || allowDelete || getAdditionalActions
+          ? `
             <td head='Actions' class="actions">
 						${
               allowEdit
@@ -344,8 +350,8 @@ function DataTable({
             ${getAdditionalActions ? getAdditionalActions(item).join("") : ""}
 						</td>
             `
-                : ""
-            }
+          : ""
+      }
             ${columns
               .map(
                 (column) =>
@@ -358,10 +364,22 @@ function DataTable({
                   }>${
                     column.getContent
                       ? column.getContent(item)
-                      : item[column.selector]
+                      : escapeDangerousHtml(item[column.selector])
                   }</td>`
               )
               .join("")}
+    `;
+  };
+
+  this.updateRow = function (item) {
+    const row = $(`#item_${item[itemKey]}`);
+    row.html(buildRow(item));
+    row.data("item", item);
+  };
+
+  this.AddRow = function (item) {
+    let row = `<tr id='item_${item[itemKey]}'>
+              ${buildRow(item)}
 						</tr>`;
     const $row = $(row);
     $row.data("item", item);
@@ -497,6 +515,8 @@ function DataTable({
     EnableBlockView(itemsTable);
 
     ConfigureDelete(itemsTable);
+    ConfigureEdit(itemsTable);
+    ConfigureAdd();
   };
 
   function ConfigureDelete(table) {
@@ -520,6 +540,50 @@ function DataTable({
         deleteParagraph,
       });
       deleteModal.open();
+    });
+  }
+
+  function ConfigureEdit(table) {
+    if (!allowEdit) return;
+
+    $(table).on("click", "a.edit-btn", function (e) {
+      e.preventDefault();
+
+      const id = $(this).attr("data-id");
+      const item = $(`#item_${id}`).data("item");
+
+      const processedFields = fields.map((field) => ({ ...field }));
+      for (let field of processedFields) {
+        field.value = item[field.selector];
+      }
+
+      const manageModal = new ManageModal({
+        containerSelector: "section.dataTableSection",
+        fields: processedFields,
+        isEdit: true,
+        pageName,
+        onSave,
+        onCloseManageModal,
+      });
+      manageModal.open();
+    });
+  }
+
+  function ConfigureAdd() {
+    if (!allowAdd) return;
+
+    $("a.add-btn").on("click", function (e) {
+      e.preventDefault();
+
+      const processedFields = fields.map((field) => ({ ...field }));
+      const manageModal = new ManageModal({
+        containerSelector: "section.dataTableSection",
+        fields: processedFields,
+        pageName,
+        onSave,
+        onCloseManageModal,
+      });
+      manageModal.open();
     });
   }
 }

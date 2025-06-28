@@ -1,5 +1,14 @@
-﻿.field-validation-error {
+﻿.field-validation-error, label.error {
     color: #F00;
+}
+
+input.error {
+    border: red 0.2px solid;
+}
+
+input.error:focus {
+    border-color: red;
+    box-shadow: unset;
 }
 
 .form-select:hover {

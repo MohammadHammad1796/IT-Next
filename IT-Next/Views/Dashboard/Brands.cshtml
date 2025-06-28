@@ -10,34 +10,11 @@
 
 <section class="container-fluid dataTableSection"></section>
 
-<div class="modal fade" id="manageModal" tabindex="-1" aria-labelledby="manageModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="manageModalLabel">New Brand</h5>
-				<button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<form id="manageItems">
-				<div class="modal-body">
-					<div class="mb-3">
-						<label asp-for="Name" class="col-form-label"></label>
-						<input autocomplete="off" asp-for="Name" class="form-control" />
-						<span asp-validation-for="Name"></span>
-					</div>
-				</div>
-				<input type="hidden" asp-for="Id" value="0" />
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-primary" id="addBtn" disabled="disabled">Add</button>
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
-
 @section scripts
 {
 	<script src="js/dashboard/form.js" asp-append-version="true"></script>
 	<script src="js/dashboard/deleteModal.js" asp-append-version="true"></script>
+	<script src="js/dashboard/manageModal.js" asp-append-version="true"></script>
 	<script src="js/dashboard/dataTable.js" asp-append-version="true"></script>
 	<script src="js/dashboard/manageBrands.js" asp-append-version="true"></script>
 }

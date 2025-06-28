@@ -4,6 +4,29 @@ function DisplayToastNotification(message, time = "Now") {
   $(".toast").toast("show");
 }
 
+function escapeDangerousHtml(unsafe) {
+  if (typeof unsafe !== "string") return unsafe;
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function debounce(func, delay) {
+  let timeout;
+
+  return function (...args) {
+    const context = this;
+    clearTimeout(timeout);
+
+    timeout = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
+}
+
 $(window).on("load", function () {
   var windowLocationHref = window.location.href;
   windowLocationHref = windowLocationHref.endsWith("/")
